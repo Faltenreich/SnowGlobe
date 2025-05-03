@@ -9,7 +9,6 @@ import com.faltenreich.snowglobe.sensor.SensorProvider
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
-import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
@@ -26,7 +25,7 @@ class GlobeViewModel(private val sensorProvider: SensorProvider) : ViewModel() {
 
     init {
         viewModelScope.launch {
-            sensorProvider.data.collectLatest { sensorData ->
+            sensorProvider.data.collect { sensorData ->
                 _state.update { state ->
                     state.copy(sensorData = sensorData)
                 }

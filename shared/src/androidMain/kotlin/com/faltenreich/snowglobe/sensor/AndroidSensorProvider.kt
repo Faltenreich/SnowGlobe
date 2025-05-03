@@ -33,7 +33,7 @@ class AndroidSensorProvider(context: Context) : SensorProvider {
 
     override fun start() {
         println("Starting sensor observation")
-        sensorManager.registerListener(listener, sensor, SensorManager.SENSOR_DELAY_GAME)
+        sensorManager.registerListener(listener, sensor, SensorManager.SENSOR_DELAY_NORMAL)
     }
 
     override fun stop() {

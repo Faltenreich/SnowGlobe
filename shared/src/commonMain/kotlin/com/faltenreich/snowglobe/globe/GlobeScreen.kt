@@ -2,17 +2,20 @@ package com.faltenreich.snowglobe.globe
 
 import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.toSize
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.faltenreich.snowglobe.globe.debug.GlobeDebugInfo
 import com.faltenreich.snowglobe.globe.snowflake.SnowFlake
 import kotlinx.serialization.Serializable
 import org.koin.compose.koinInject
@@ -25,18 +28,19 @@ fun GlobeScreen(
     viewModel: GlobeViewModel = koinInject(),
     modifier: Modifier = Modifier,
 ) {
-    val state = viewModel.state.collectAsStateWithLifecycle()
+    val state = viewModel.state.collectAsStateWithLifecycle().value
 
     LaunchedEffect(Unit) { viewModel.start() }
 
     Scaffold { padding ->
-        Column {
-            Text("Hello, World", modifier = modifier.padding(padding))
-
+        Column(modifier = modifier.padding(padding)) {
             BoxWithConstraints(
-                modifier = Modifier.onGloballyPositioned { viewModel.setCanvas(it.size.toSize()) },
+                modifier = Modifier
+                    .weight(1f)
+                    .onGloballyPositioned { viewModel.setCanvas(it.size.toSize()) },
+                contentAlignment = Alignment.BottomStart,
             ) {
-                state.value.snowFlakes.forEach { snowFlake ->
+                state.snowFlakes.forEach { snowFlake ->
                     SnowFlake(
                         state = snowFlake,
                         modifier = Modifier.offset {
@@ -49,6 +53,11 @@ fun GlobeScreen(
                     )
                 }
             }
+            HorizontalDivider()
+            GlobeDebugInfo(
+                state = state,
+                modifier = Modifier.fillMaxWidth(),
+            )
         }
     }
 }
