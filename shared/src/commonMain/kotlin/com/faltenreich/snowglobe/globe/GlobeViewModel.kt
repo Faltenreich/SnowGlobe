@@ -1,10 +1,9 @@
 package com.faltenreich.snowglobe.globe
 
-import androidx.compose.ui.geometry.Rect
 import androidx.compose.ui.geometry.Size
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.faltenreich.snowglobe.globe.snowflake.SnowFlakeState
+import com.faltenreich.snowglobe.globe.snowflake.SnowFlakeSpawner
 import com.faltenreich.snowglobe.sensor.SensorProvider
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -14,10 +13,12 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import kotlin.math.max
 import kotlin.math.min
-import kotlin.random.Random
 import kotlin.time.Duration.Companion.milliseconds
 
-class GlobeViewModel(private val sensorProvider: SensorProvider) : ViewModel() {
+class GlobeViewModel(
+    private val sensorProvider: SensorProvider,
+    private val snowFlakeSpawner: SnowFlakeSpawner,
+) : ViewModel() {
 
     private val _state = MutableStateFlow(GlobeState.Initial)
     val state = _state.stateIn(
@@ -61,36 +62,20 @@ class GlobeViewModel(private val sensorProvider: SensorProvider) : ViewModel() {
         }
     }
 
+    fun setup(canvas: Size) {
+        _state.update { state ->
+            state.copy(
+                canvas = canvas,
+                snowFlakes = snowFlakeSpawner.spawn(canvas)
+            )
+        }
+    }
+
     fun start() {
         sensorProvider.start()
     }
 
     fun stop() {
         sensorProvider.stop()
-    }
-
-    fun setCanvas(canvas: Size) {
-        val random = Random(0)
-        val width = 20f
-        val height = 20f
-        val count = 100
-
-        _state.update { state ->
-            state.copy(
-                canvas = canvas,
-                snowFlakes = (0 .. count).map {
-                    val x = random.nextInt(0, canvas.width.toInt()).toFloat()
-                    val y = random.nextInt(0, canvas.height.toInt()).toFloat()
-                    SnowFlakeState(
-                        coordinates = Rect(
-                            left = x,
-                            top = y,
-                            right = x + width,
-                            bottom = y + height,
-                        )
-                    )
-                }
-            )
-        }
     }
 }

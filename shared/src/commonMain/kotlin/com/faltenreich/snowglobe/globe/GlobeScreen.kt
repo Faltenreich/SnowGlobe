@@ -38,7 +38,7 @@ fun GlobeScreen(
                     .fillMaxWidth()
                     .weight(1f)
                     .onGloballyPositioned { coordinates ->
-                        viewModel.setCanvas(coordinates.size.toSize())
+                        viewModel.setup(coordinates.size.toSize())
                     },
             ) {
                 state.snowFlakes.forEach { snowFlake ->
