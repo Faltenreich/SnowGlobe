@@ -38,18 +38,18 @@ class GlobeViewModel(private val sensorProvider: SensorProvider) : ViewModel() {
                 _state.update { state ->
                     state.copy(
                         snowFlakes = state.snowFlakes.map { snowFlake ->
-                            // FIXME: Subtract snowFlake.size
-                            val x = min(state.canvas.width, max(0f, snowFlake.coordinates.left - state.sensorData.x))
-                            val y = min(state.canvas.height, max(0f, snowFlake.coordinates.top + state.sensorData.y))
+                            val x = min(state.canvas.width - snowFlake.coordinates.width, max(0f, snowFlake.coordinates.left - state.sensorData.x))
+                            val y = min(state.canvas.height - snowFlake.coordinates.height, max(0f, snowFlake.coordinates.top + state.sensorData.y))
                             snowFlake.copy(
                                 coordinates = snowFlake.coordinates.copy(
-                                    top = y,
                                     left = x,
+                                    top = y,
+                                    right = x + snowFlake.coordinates.width,
+                                    bottom = y + snowFlake.coordinates.height,
                                 ),
                             )
                         }
                     )
-
                 }
                 delay(10.milliseconds)
             }
