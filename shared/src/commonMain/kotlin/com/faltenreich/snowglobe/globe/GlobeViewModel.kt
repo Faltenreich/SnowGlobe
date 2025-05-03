@@ -6,12 +6,15 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.faltenreich.snowglobe.globe.snowflake.SnowFlakeState
 import com.faltenreich.snowglobe.sensor.SensorProvider
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import kotlin.time.Duration.Companion.seconds
 
 class GlobeViewModel(private val sensorProvider: SensorProvider) : ViewModel() {
 
@@ -38,6 +41,22 @@ class GlobeViewModel(private val sensorProvider: SensorProvider) : ViewModel() {
                         )
                     )
                 }
+            }
+        }
+        viewModelScope.launch {
+            while (true) {
+                val sensorData = sensorData.firstOrNull()
+                println("Sensor data: $sensorData")
+                snowFlakes.update { snowFlakes ->
+                    snowFlakes.map { snowFlake ->
+                        snowFlake.copy(
+                            coordinates = snowFlake.coordinates.copy(
+                                top = snowFlake.coordinates.top + 10,
+                            ),
+                        )
+                    }
+                }
+                delay(1.seconds)
             }
         }
     }
