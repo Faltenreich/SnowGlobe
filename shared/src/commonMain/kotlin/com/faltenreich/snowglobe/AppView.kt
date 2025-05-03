@@ -1,32 +1,26 @@
 package com.faltenreich.snowglobe
 
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import org.jetbrains.compose.ui.tooling.preview.Preview
+import androidx.navigation.compose.NavHost
+import androidx.navigation.compose.composable
+import androidx.navigation.compose.rememberNavController
+import com.faltenreich.snowglobe.globe.Globe
+import com.faltenreich.snowglobe.globe.GlobeScreen
 
 @Composable
 fun AppView(modifier: Modifier = Modifier) {
     AppTheme {
-        Surface(
-            modifier = modifier.fillMaxSize(),
-            color = MaterialTheme.colorScheme.background
-        ) {
-            GreetingView(Greeting().greet())
+        Surface(modifier = modifier.fillMaxSize()) {
+            val navController = rememberNavController()
+            NavHost(
+                navController = navController,
+                startDestination = Globe,
+            ) {
+                composable<Globe> { GlobeScreen() }
+            }
         }
     }
-}
-
-@Composable
-fun GreetingView(text: String) {
-    Text(text = text)
-}
-
-@Preview
-@Composable
-private fun Preview() {
-    AppView()
 }

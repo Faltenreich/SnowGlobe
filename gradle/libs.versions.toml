@@ -1,5 +1,5 @@
 [versions]
-about-libraries = "11.6.3"
+aboutlibraries = "11.6.3"
 activity-compose = "1.10.1"
 android-gradle = "8.9.2"
 android-lifecycle-compose = "2.8.7"
@@ -8,9 +8,10 @@ compose-navigation = "2.8.0-alpha13"
 coroutines = "1.10.2"
 koin = "4.0.4"
 kotlin = "2.1.20"
+kotlin-serialization = "1.8.1"
 
 [libraries]
-about-libraries = { module = "com.mikepenz:aboutlibraries-compose-m3", version.ref = "about-libraries" }
+aboutlibraries = { module = "com.mikepenz:aboutlibraries-compose-m3", version.ref = "aboutlibraries" }
 activity-compose = { module = "androidx.activity:activity-compose", version.ref = "activity-compose" }
 androidx-lifecycle-compose = { module = "androidx.lifecycle:lifecycle-runtime-compose", version.ref = "android-lifecycle-compose" }
 compose-navigation = { module = "org.jetbrains.androidx.navigation:navigation-compose", version.ref = "compose-navigation" }
@@ -21,12 +22,14 @@ koin-compose = { module = "io.insert-koin:koin-compose" }
 koin-compose-viewmodel = { module = "io.insert-koin:koin-compose-viewmodel" }
 koin-core = { module = "io.insert-koin:koin-core" }
 koin-viewmodel = { module = "io.insert-koin:koin-core-viewmodel" }
+kotlin-serialization = { module = "org.jetbrains.kotlinx:kotlinx-serialization-core" , version.ref = "kotlin-serialization" }
 
 [plugins]
-about-libraries = { id = "com.mikepenz.aboutlibraries.plugin", version.ref = "about-libraries" }
+about-libraries = { id = "com.mikepenz.aboutlibraries.plugin", version.ref = "aboutlibraries" }
 android-application = { id = "com.android.application", version.ref = "android-gradle" }
 android-library = { id = "com.android.library", version.ref = "android-gradle" }
 compose = { id = "org.jetbrains.compose", version.ref = "compose" }
 compose-compiler = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "kotlin" }
 kotlin-android = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
 kotlin-multiplatform = { id = "org.jetbrains.kotlin.multiplatform", version.ref = "kotlin" }
+kotlin-serialization = { id = "org.jetbrains.kotlin.plugin.serialization", version.ref = "kotlin" }
