@@ -14,6 +14,7 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import kotlin.math.max
 import kotlin.math.min
+import kotlin.random.Random
 import kotlin.time.Duration.Companion.milliseconds
 
 class GlobeViewModel(private val sensorProvider: SensorProvider) : ViewModel() {
@@ -38,14 +39,18 @@ class GlobeViewModel(private val sensorProvider: SensorProvider) : ViewModel() {
                 _state.update { state ->
                     state.copy(
                         snowFlakes = state.snowFlakes.map { snowFlake ->
-                            val x = min(state.canvas.width - snowFlake.coordinates.width, max(0f, snowFlake.coordinates.left - state.sensorData.x))
-                            val y = min(state.canvas.height - snowFlake.coordinates.height, max(0f, snowFlake.coordinates.top + state.sensorData.y))
+                            val width = snowFlake.coordinates.width
+                            val height = snowFlake.coordinates.height
+                            val (xMin, xMax) = 0f to state.canvas.width - width
+                            val (yMin, yMax) = 0f to state.canvas.height - height
+                            val x = min(xMax, max(xMin, snowFlake.coordinates.left - state.sensorData.x))
+                            val y = min(yMax, max(yMin, snowFlake.coordinates.top + state.sensorData.y))
                             snowFlake.copy(
                                 coordinates = snowFlake.coordinates.copy(
                                     left = x,
                                     top = y,
-                                    right = x + snowFlake.coordinates.width,
-                                    bottom = y + snowFlake.coordinates.height,
+                                    right = x + width,
+                                    bottom = y + height,
                                 ),
                             )
                         }
@@ -65,16 +70,17 @@ class GlobeViewModel(private val sensorProvider: SensorProvider) : ViewModel() {
     }
 
     fun setCanvas(canvas: Size) {
-        val x = canvas.width / 2f
-        val y = canvas.height / 2f
+        val random = Random(0)
         val width = 20f
         val height = 20f
+        val count = 100
 
         _state.update { state ->
             state.copy(
                 canvas = canvas,
-                // TODO: Add more
-                snowFlakes = listOf(
+                snowFlakes = (0 .. count).map {
+                    val x = random.nextInt(0, canvas.width.toInt()).toFloat()
+                    val y = random.nextInt(0, canvas.height.toInt()).toFloat()
                     SnowFlakeState(
                         coordinates = Rect(
                             left = x,
@@ -83,7 +89,7 @@ class GlobeViewModel(private val sensorProvider: SensorProvider) : ViewModel() {
                             bottom = y + height,
                         )
                     )
-                )
+                }
             )
         }
     }
