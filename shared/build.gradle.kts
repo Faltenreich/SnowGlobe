@@ -18,9 +18,9 @@ kotlin {
         commonMain.dependencies {
             implementation(libs.aboutlibraries)
             implementation(compose.components.resources)
+            implementation(compose.components.uiToolingPreview)
             implementation(compose.foundation)
             implementation(compose.material3)
-            implementation(compose.components.uiToolingPreview)
             implementation(compose.runtime)
             implementation(libs.compose.navigation)
             implementation(libs.coroutines)

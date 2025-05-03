@@ -25,7 +25,6 @@ class AndroidSensorProvider(context: Context) : SensorProvider {
                 y = event.values[1],
                 z = event.values[2],
             )
-            println("Receiving sensor data: $data")
             _data.update { data }
         }
 
