@@ -12,7 +12,9 @@ import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
-import kotlin.time.Duration.Companion.seconds
+import kotlin.math.max
+import kotlin.math.min
+import kotlin.time.Duration.Companion.milliseconds
 
 class GlobeViewModel(private val sensorProvider: SensorProvider) : ViewModel() {
 
@@ -36,17 +38,20 @@ class GlobeViewModel(private val sensorProvider: SensorProvider) : ViewModel() {
                 _state.update { state ->
                     state.copy(
                         snowFlakes = state.snowFlakes.map { snowFlake ->
+                            // FIXME: Subtract snowFlake.size
+                            val x = min(state.canvas.width, max(0f, snowFlake.coordinates.left - state.sensorData.x))
+                            val y = min(state.canvas.height, max(0f, snowFlake.coordinates.top + state.sensorData.y))
                             snowFlake.copy(
                                 coordinates = snowFlake.coordinates.copy(
-                                    top = snowFlake.coordinates.top, // TODO: state.sensorData.y,
-                                    left = snowFlake.coordinates.left, // TODO + state.sensorData.x,
+                                    top = y,
+                                    left = x,
                                 ),
                             )
                         }
                     )
 
                 }
-                delay(1.seconds)
+                delay(10.milliseconds)
             }
         }
     }
