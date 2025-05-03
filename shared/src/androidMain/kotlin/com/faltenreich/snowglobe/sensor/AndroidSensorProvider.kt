@@ -11,7 +11,7 @@ import kotlinx.coroutines.flow.update
 class AndroidSensorProvider(context: Context) : SensorProvider {
 
     private val sensorManager = context.getSystemService(Context.SENSOR_SERVICE) as SensorManager
-    private val sensor = sensorManager.getDefaultSensor(Sensor.TYPE_GYROSCOPE)
+    private val sensor = sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER)
 
     private val _data = MutableStateFlow(SensorData.Zero)
     override val data = _data

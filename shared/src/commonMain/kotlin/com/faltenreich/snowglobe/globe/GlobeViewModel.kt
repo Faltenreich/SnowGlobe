@@ -38,8 +38,8 @@ class GlobeViewModel(private val sensorProvider: SensorProvider) : ViewModel() {
                         snowFlakes = state.snowFlakes.map { snowFlake ->
                             snowFlake.copy(
                                 coordinates = snowFlake.coordinates.copy(
-                                    top = snowFlake.coordinates.top + (state.sensorData.y * 10),
-                                    left = snowFlake.coordinates.top + (state.sensorData.x * 10),
+                                    top = snowFlake.coordinates.top, // TODO: state.sensorData.y,
+                                    left = snowFlake.coordinates.left, // TODO + state.sensorData.x,
                                 ),
                             )
                         }
@@ -68,6 +68,7 @@ class GlobeViewModel(private val sensorProvider: SensorProvider) : ViewModel() {
         _state.update { state ->
             state.copy(
                 canvas = canvas,
+                // TODO: Add more
                 snowFlakes = listOf(
                     SnowFlakeState(
                         coordinates = Rect(

@@ -1,6 +1,6 @@
 package com.faltenreich.snowglobe.globe
 
-import androidx.compose.foundation.layout.BoxWithConstraints
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.offset
@@ -9,7 +9,6 @@ import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.unit.IntOffset
@@ -34,11 +33,13 @@ fun GlobeScreen(
 
     Scaffold { padding ->
         Column(modifier = modifier.padding(padding)) {
-            BoxWithConstraints(
+            Box(
                 modifier = Modifier
+                    .fillMaxWidth()
                     .weight(1f)
-                    .onGloballyPositioned { viewModel.setCanvas(it.size.toSize()) },
-                contentAlignment = Alignment.BottomStart,
+                    .onGloballyPositioned { coordinates ->
+                        viewModel.setCanvas(coordinates.size.toSize())
+                    },
             ) {
                 state.snowFlakes.forEach { snowFlake ->
                     SnowFlake(
