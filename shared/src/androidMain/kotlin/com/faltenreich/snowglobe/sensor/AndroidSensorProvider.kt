@@ -2,9 +2,9 @@ package com.faltenreich.snowglobe.sensor
 
 import android.content.Context
 import android.hardware.Sensor
+import android.hardware.SensorEvent
+import android.hardware.SensorEventListener
 import android.hardware.SensorManager
-import android.hardware.TriggerEvent
-import android.hardware.TriggerEventListener
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.update
 
@@ -16,24 +16,29 @@ class AndroidSensorProvider(context: Context) : SensorProvider {
     private val _data = MutableStateFlow(SensorData.Zero)
     override val data = _data
 
-    private val listener = object : TriggerEventListener() {
-        override fun onTrigger(triggerEvent: TriggerEvent?) {
-            triggerEvent?.takeIf { it.values.size >= 3 } ?: return
-            _data.update {
-                SensorData(
-                    x = triggerEvent.values[0],
-                    y = triggerEvent.values[1],
-                    z = triggerEvent.values[2],
-                )
-            }
+    private val listener = object : SensorEventListener {
+
+        override fun onSensorChanged(event: SensorEvent?) {
+            event?.takeIf { it.values.size >= 3 } ?: return
+            val data = SensorData(
+                x = event.values[0],
+                y = event.values[1],
+                z = event.values[2],
+            )
+            println("Receiving sensor data: $data")
+            _data.update { data }
         }
+
+        override fun onAccuracyChanged(sensor: Sensor?, accuracy: Int) = Unit
     }
 
     override fun start() {
-        sensorManager.requestTriggerSensor(listener, sensor)
+        println("Starting sensor observation")
+        sensorManager.registerListener(listener, sensor, SensorManager.SENSOR_DELAY_GAME)
     }
 
     override fun stop() {
-        sensorManager.cancelTriggerSensor(listener, sensor)
+        println("Stopping sensor observation")
+        sensorManager.unregisterListener(listener, sensor)
     }
 }
