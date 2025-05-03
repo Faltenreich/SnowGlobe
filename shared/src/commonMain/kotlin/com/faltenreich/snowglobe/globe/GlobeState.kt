@@ -1,5 +1,5 @@
 package com.faltenreich.snowglobe.globe
 
-data class GlobeState(
-    val snowFlakes: List<SnowFlake>,
-)
+import com.faltenreich.snowglobe.globe.snowflake.SnowFlakeState
+
+data class GlobeState(val snowFlakes: List<SnowFlakeState>)

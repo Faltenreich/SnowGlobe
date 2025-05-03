@@ -1,7 +1,10 @@
 package com.faltenreich.snowglobe.globe
 
+import androidx.compose.ui.geometry.Rect
+import androidx.compose.ui.geometry.Size
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.faltenreich.snowglobe.globe.snowflake.SnowFlakeState
 import com.faltenreich.snowglobe.sensor.SensorProvider
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
@@ -13,7 +16,8 @@ import kotlinx.coroutines.launch
 class GlobeViewModel(private val sensorProvider: SensorProvider) : ViewModel() {
 
     private val sensorData = sensorProvider.data
-    private val snowFlakes = MutableStateFlow(emptyList<SnowFlake>())
+    private val canvas = MutableStateFlow(Size.Zero)
+    private val snowFlakes = MutableStateFlow(emptyList<SnowFlakeState>())
 
     val state = snowFlakes.map(::GlobeState).stateIn(
         scope = viewModelScope,
@@ -25,10 +29,12 @@ class GlobeViewModel(private val sensorProvider: SensorProvider) : ViewModel() {
         viewModelScope.launch {
             snowFlakes.update {
                 (0 until 100).map { index ->
-                    SnowFlake(
-                        position = SnowFlake.Position(
-                            x = index.toFloat(),
-                            y = index.toFloat(),
+                    SnowFlakeState(
+                        coordinates = Rect(
+                            left = index.toFloat(),
+                            top = index.toFloat(),
+                            right = index.toFloat() + 20,
+                            bottom = index.toFloat() + 20,
                         )
                     )
                 }
@@ -42,5 +48,9 @@ class GlobeViewModel(private val sensorProvider: SensorProvider) : ViewModel() {
 
     fun stop() {
         sensorProvider.stop()
+    }
+
+    fun setCanvas(size: Size) {
+        canvas.update { size }
     }
 }

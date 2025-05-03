@@ -9,8 +9,11 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.unit.IntOffset
+import androidx.compose.ui.unit.toSize
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.faltenreich.snowglobe.globe.snowflake.SnowFlake
 import kotlinx.serialization.Serializable
 import org.koin.compose.koinInject
 
@@ -24,23 +27,25 @@ fun GlobeScreen(
 ) {
     val state = viewModel.state.collectAsStateWithLifecycle()
 
-    LaunchedEffect(Unit) {
-        viewModel.start()
-    }
+    LaunchedEffect(Unit) { viewModel.start() }
 
     Scaffold { padding ->
         Column {
             Text("Hello, World", modifier = modifier.padding(padding))
-            BoxWithConstraints {
+
+            BoxWithConstraints(
+                modifier = Modifier.onGloballyPositioned { viewModel.setCanvas(it.size.toSize()) },
+            ) {
                 state.value.snowFlakes.forEach { snowFlake ->
-                    Text(
-                        text = "o",
+                    SnowFlake(
+                        state = snowFlake,
                         modifier = Modifier.offset {
+                            val topLeft = snowFlake.coordinates.topLeft
                             IntOffset(
-                                x = snowFlake.position.x.toInt(),
-                                y = snowFlake.position.y.toInt(),
+                                x = topLeft.x.toInt(),
+                                y = topLeft.y.toInt(),
                             )
-                        },
+                        }
                     )
                 }
             }
