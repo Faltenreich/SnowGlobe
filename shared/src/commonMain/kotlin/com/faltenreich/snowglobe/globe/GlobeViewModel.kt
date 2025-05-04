@@ -19,6 +19,7 @@ import kotlin.math.max
 import kotlin.math.min
 import kotlin.time.Clock
 import kotlin.time.Duration.Companion.milliseconds
+import kotlin.time.Duration.Companion.seconds
 
 class GlobeViewModel(
     private val sensorProvider: SensorProvider,
@@ -48,6 +49,7 @@ class GlobeViewModel(
                     val accelerationScale = 500f
                     val velocityMax = 500f
                     val bounceFactor = .25f
+                    val invisibleFrame = 1.seconds
 
                     state.copy(
                         snowFlakes = state.snowFlakes.map { snowFlake ->
@@ -56,14 +58,14 @@ class GlobeViewModel(
                                 y = state.sensorData.y * accelerationScale,
                             )
 
-                            val velocity = Velocity(
+                            var velocity = Velocity(
                                 x = (snowFlake.velocity.x + acceleration.x * secondsElapsed)
                                     .coerceIn(-velocityMax, velocityMax),
                                 y = (snowFlake.velocity.y + acceleration.y * secondsElapsed)
                                     .coerceIn(-velocityMax, velocityMax),
                             )
 
-                            val position = Offset(
+                            var position = Offset(
                                 x = snowFlake.position.x + velocity.x * secondsElapsed,
                                 y = snowFlake.position.y + velocity.y * secondsElapsed,
                             )
@@ -75,32 +77,33 @@ class GlobeViewModel(
                                 bottom = state.canvas.height - snowFlake.size.height,
                             )
 
-                            val positionInBounds = Offset(
+                            position = Offset(
                                 x = min(bounds.right, max(bounds.left, position.x)),
                                 y = min(bounds.bottom, max(bounds.top, position.y)),
                             )
 
                             val rectangle = Rect(
-                                left = positionInBounds.x,
-                                top = positionInBounds.y,
-                                right = positionInBounds.x + snowFlake.size.width,
-                                bottom = positionInBounds.y + snowFlake.size.height,
+                                left = position.x,
+                                top = position.y,
+                                right = position.x + snowFlake.size.width,
+                                bottom = position.y + snowFlake.size.height,
                             )
 
                             val overlap = state.snowFlakes
                                 .minus(snowFlake)
                                 .firstOrNull { other -> other.rectangle.overlaps(rectangle) }
-                            val positionTarget = if (overlap == null) rectangle.topLeft else snowFlake.position
-                            val velocityTarget = overlap?.let { other ->
-                                val dx = rectangle.center.x - other.rectangle.center.x
-                                val dy = rectangle.center.y - other.rectangle.center.y
-                                if (abs(dx) > abs(dy)) velocity.copy(x = velocity.x * -bounceFactor)
+
+                            overlap?.let {
+                                position = snowFlake.position
+                                val dx = rectangle.center.x - overlap.rectangle.center.x
+                                val dy = rectangle.center.y - overlap.rectangle.center.y
+                                velocity = if (abs(dx) > abs(dy)) velocity.copy(x = velocity.x * -bounceFactor)
                                 else velocity.copy(y = velocity.y * -bounceFactor)
-                            } ?: velocity
+                            }
 
                             snowFlake.copy(
-                                position = positionTarget,
-                                velocity = velocityTarget,
+                                position = position,
+                                velocity = velocity,
                             )
                         },
                         updatedAt = now,
@@ -126,6 +129,7 @@ class GlobeViewModel(
         sensorProvider.start()
     }
 
+    @Suppress("unused")
     fun stop() {
         sensorProvider.stop()
     }
