@@ -27,30 +27,31 @@ class GlobeViewModel(
         initialValue = GlobeState.Initial,
     )
 
-    init {
-        viewModelScope.launch {
-            sensorProvider.data.collect { sensorData ->
-                _state.update { state ->
-                    state.copy(sensorData = sensorData)
-                }
-            }
-        }
-        viewModelScope.launch {
-            while (true) {
-                val state = runLoop(_state.value)
-                _state.update { state }
-                // 60 FPS
-                delay(16.milliseconds)
-            }
-        }
-    }
-
     fun setup(canvas: Size) {
         _state.update { state ->
             state.copy(
                 canvas = canvas,
                 snowFlakes = snowFlakeSpawner.spawn(canvas)
             )
+        }
+        observeSensor()
+        startLoop()
+    }
+
+    private fun observeSensor() = viewModelScope.launch {
+        sensorProvider.data.collect { sensorData ->
+            _state.update { state ->
+                state.copy(sensorData = sensorData)
+            }
+        }
+    }
+
+    private fun startLoop() = viewModelScope.launch {
+        while (true) {
+            val state = runLoop(_state.value)
+            _state.update { state }
+            // 60 FPS
+            delay(16.milliseconds)
         }
     }
 

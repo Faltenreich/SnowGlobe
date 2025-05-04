@@ -4,6 +4,8 @@ import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Rect
 import androidx.compose.ui.unit.Velocity
 import com.faltenreich.snowglobe.globe.GlobeState
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 import kotlin.math.abs
 import kotlin.math.max
 import kotlin.math.min
@@ -11,12 +13,12 @@ import kotlin.time.Clock
 
 class RunLoopUseCase {
 
-    operator fun invoke(
+    suspend operator fun invoke(
         state: GlobeState,
         accelerationScale: Float = ACCELERATION_SCALE,
         velocityMax: Float = VELOCITY_MAX,
         bounceFactor: Float = BOUNCE_FACTOR,
-    ): GlobeState {
+    ): GlobeState = withContext(Dispatchers.Default) {
         val now = Clock.System.now()
         val secondsElapsed = now.minus(state.updatedAt).inWholeNanoseconds / 1000_000_000f
 
@@ -76,7 +78,7 @@ class RunLoopUseCase {
                 velocity = velocity,
             )
         }
-        return state.copy(snowFlakes = snowFlakes, updatedAt = now)
+        state.copy(snowFlakes = snowFlakes, updatedAt = now)
     }
 
     companion object {
