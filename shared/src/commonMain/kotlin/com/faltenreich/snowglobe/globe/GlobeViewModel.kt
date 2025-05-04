@@ -42,9 +42,10 @@ class GlobeViewModel(
         viewModelScope.launch {
             while (true) {
                 _state.update { state ->
-                    // FIXME: Velocity starts too slow and builds up too high
                     val now = Clock.System.now()
+                    // FIXME: Velocity starts too slow
                     val deltaTime = now.minus(state.updatedAt).inWholeNanoseconds / 1_000_000_000f
+                    val velocityMax = 10f
 
                     state.copy(
                         snowFlakes = state.snowFlakes.map { snowFlake ->
@@ -54,8 +55,8 @@ class GlobeViewModel(
                             )
 
                             val velocity = Velocity(
-                                x = snowFlake.velocity.x + acceleration.x * deltaTime,
-                                y = snowFlake.velocity.y + acceleration.y * deltaTime,
+                                x = (snowFlake.velocity.x + acceleration.x * deltaTime).coerceIn(-velocityMax, velocityMax),
+                                y = (snowFlake.velocity.y + acceleration.y * deltaTime).coerceIn(-velocityMax, velocityMax),
                             )
 
                             val position = Offset(
