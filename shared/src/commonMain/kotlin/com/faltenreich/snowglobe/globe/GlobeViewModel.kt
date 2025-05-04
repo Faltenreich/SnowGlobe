@@ -43,25 +43,27 @@ class GlobeViewModel(
             while (true) {
                 _state.update { state ->
                     val now = Clock.System.now()
-                    // FIXME: Velocity starts too slow
-                    val deltaTime = now.minus(state.updatedAt).inWholeNanoseconds / 1_000_000_000f
-                    val velocityMax = 10f
+                    val secondsElapsed = now.minus(state.updatedAt).inWholeNanoseconds / 1000_000_000f
+                    val accelerationScale = 500f
+                    val velocityMax = 500f
 
                     state.copy(
                         snowFlakes = state.snowFlakes.map { snowFlake ->
                             val acceleration = Velocity(
-                                x = -state.sensorData.x,
-                                y = state.sensorData.y,
+                                x = -state.sensorData.x * accelerationScale,
+                                y = state.sensorData.y * accelerationScale,
                             )
 
                             val velocity = Velocity(
-                                x = (snowFlake.velocity.x + acceleration.x * deltaTime).coerceIn(-velocityMax, velocityMax),
-                                y = (snowFlake.velocity.y + acceleration.y * deltaTime).coerceIn(-velocityMax, velocityMax),
+                                x = (snowFlake.velocity.x + acceleration.x * secondsElapsed)
+                                    .coerceIn(-velocityMax, velocityMax),
+                                y = (snowFlake.velocity.y + acceleration.y * secondsElapsed)
+                                    .coerceIn(-velocityMax, velocityMax),
                             )
 
                             val position = Offset(
-                                x = snowFlake.position.x + velocity.x * deltaTime + .5f * acceleration.x * deltaTime * deltaTime,
-                                y = snowFlake.position.y + velocity.y * deltaTime + .5f * acceleration.y * deltaTime * deltaTime,
+                                x = snowFlake.position.x + velocity.x * secondsElapsed,
+                                y = snowFlake.position.y + velocity.y * secondsElapsed,
                             )
 
                             val bounds = Rect(
@@ -94,8 +96,9 @@ class GlobeViewModel(
                         updatedAt = now,
                     )
                 }
-                // TODO: Determine frame rate
-                delay(1.milliseconds)
+                // TODO: Calculate frame rate
+                // 60 FPS
+                delay(16.milliseconds)
             }
         }
     }
