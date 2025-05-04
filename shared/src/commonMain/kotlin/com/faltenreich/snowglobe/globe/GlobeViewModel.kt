@@ -41,21 +41,22 @@ class GlobeViewModel(
             }
         }
         viewModelScope.launch {
+            val accelerationScale = 500f
+            val velocityMax = 500f
+            val bounceFactor = .25f
+
             while (true) {
                 val state = _state.value
 
                 val now = Clock.System.now()
                 val secondsElapsed = now.minus(state.updatedAt).inWholeNanoseconds / 1000_000_000f
-                val accelerationScale = 500f
-                val velocityMax = 500f
-                val bounceFactor = .25f
+
+                val acceleration = Velocity(
+                    x = -state.sensorData.x * accelerationScale,
+                    y = state.sensorData.y * accelerationScale,
+                )
 
                 val snowFlakes = state.snowFlakes.map { snowFlake ->
-                    val acceleration = Velocity(
-                        x = -state.sensorData.x * accelerationScale,
-                        y = state.sensorData.y * accelerationScale,
-                    )
-
                     var velocity = Velocity(
                         x = (snowFlake.velocity.x + acceleration.x * secondsElapsed)
                             .coerceIn(-velocityMax, velocityMax),

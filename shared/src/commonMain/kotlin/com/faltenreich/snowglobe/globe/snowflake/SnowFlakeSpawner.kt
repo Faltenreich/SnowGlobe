@@ -26,7 +26,7 @@ class SnowFlakeSpawner {
 
     companion object {
 
-        private const val COUNT = 200
+        private const val COUNT = 500
         private const val WIDTH = 10f
         private const val HEIGHT = WIDTH
     }

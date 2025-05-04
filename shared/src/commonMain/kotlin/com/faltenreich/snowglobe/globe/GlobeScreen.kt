@@ -8,8 +8,10 @@ import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.Path
 import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.unit.toSize
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -26,6 +28,7 @@ fun GlobeScreen(
     modifier: Modifier = Modifier,
 ) {
     val state = viewModel.state.collectAsStateWithLifecycle().value
+    val path = remember { Path() }
 
     LaunchedEffect(Unit) { viewModel.start() }
 
@@ -40,12 +43,10 @@ fun GlobeScreen(
                     },
             ) {
                 state.snowFlakes.forEach { snowFlake ->
-                    drawCircle(
-                        color = Color.White,
-                        radius = snowFlake.size.width / 2,
-                        center = snowFlake.rectangle.center,
-                    )
+                    path.addRect(snowFlake.rectangle)
                 }
+                drawPath(path, color = Color.White)
+                path.reset()
             }
             HorizontalDivider()
             GlobeDebugInfo(
