@@ -15,6 +15,7 @@ import kotlinx.coroutines.launch
 import kotlin.math.max
 import kotlin.math.min
 import kotlin.time.Duration.Companion.milliseconds
+import kotlin.time.TimeSource
 
 class GlobeViewModel(
     private val sensorProvider: SensorProvider,
@@ -59,12 +60,11 @@ class GlobeViewModel(
 
                             val overlaps = state.snowFlakes
                                 .minus(snowFlake)
-                                .none { it.dimension.overlaps(bounds) }
-                            if (overlaps) {
-                                snowFlake.copy(position = bounds.topLeft)
-                            } else {
-                                snowFlake
-                            }
+                                .any { it.dimension.overlaps(bounds) }
+                            snowFlake.copy(
+                                position = if (overlaps) snowFlake.position else bounds.topLeft,
+                                updatedAt = TimeSource.Monotonic.markNow(),
+                            )
                         }
                     )
                 }
