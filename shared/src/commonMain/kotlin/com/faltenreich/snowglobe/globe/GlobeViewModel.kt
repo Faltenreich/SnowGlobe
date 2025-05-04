@@ -1,7 +1,9 @@
 package com.faltenreich.snowglobe.globe
 
+import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Rect
 import androidx.compose.ui.geometry.Size
+import androidx.compose.ui.unit.Velocity
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.faltenreich.snowglobe.globe.snowflake.SnowFlakeSpawner
@@ -42,28 +44,49 @@ class GlobeViewModel(
                 _state.update { state ->
                     state.copy(
                         snowFlakes = state.snowFlakes.map { snowFlake ->
-                            val width = snowFlake.size.width
-                            val height = snowFlake.size.height
+                            val updatedAt = TimeSource.Monotonic.markNow()
+                            val deltaTime = updatedAt.compareTo(snowFlake.updatedAt)
 
-                            val (xMin, xMax) = 0f to state.canvas.width - width
-                            val (yMin, yMax) = 0f to state.canvas.height - height
+                            val acceleration = Velocity(
+                                x = state.sensorData.x,
+                                y = state.sensorData.y,
+                            )
 
-                            val x = min(xMax, max(xMin, snowFlake.position.x - state.sensorData.x))
-                            val y = min(yMax, max(yMin, snowFlake.position.y + state.sensorData.y))
+                            val velocity = Velocity(
+                                x = snowFlake.velocity.x + (acceleration.x * deltaTime),
+                                y = snowFlake.velocity.y + (acceleration.y * deltaTime),
+                            )
+
+                            val position = Offset(
+                                x = snowFlake.position.x + velocity.x * deltaTime + .5f * acceleration.x * deltaTime * deltaTime,
+                                y = snowFlake.position.y + velocity.y * deltaTime + .5f * acceleration.y * deltaTime * deltaTime,
+                            )
 
                             val bounds = Rect(
-                                left = x,
-                                top = y,
-                                right = x + width,
-                                bottom = y + height,
+                                left = 0f,
+                                top = 0f,
+                                right = state.canvas.width - snowFlake.size.width,
+                                bottom = state.canvas.height - snowFlake.size.height,
+                            )
+
+                            val positionInBounds = Offset(
+                                x = min(bounds.right, max(bounds.left, snowFlake.position.x - state.sensorData.x)),
+                                y = min(bounds.bottom, max(bounds.top, snowFlake.position.y + state.sensorData.y)),
+                            )
+
+                            val dimension = Rect(
+                                left = positionInBounds.x,
+                                top = positionInBounds.y,
+                                right = positionInBounds.x + snowFlake.size.width,
+                                bottom = positionInBounds.y + snowFlake.size.height,
                             )
 
                             val overlaps = state.snowFlakes
                                 .minus(snowFlake)
-                                .any { it.dimension.overlaps(bounds) }
+                                .any { it.dimension.overlaps(dimension) }
                             snowFlake.copy(
-                                position = if (overlaps) snowFlake.position else bounds.topLeft,
-                                updatedAt = TimeSource.Monotonic.markNow(),
+                                position = if (overlaps) snowFlake.position else dimension.topLeft,
+                                updatedAt = updatedAt,
                             )
                         }
                     )
