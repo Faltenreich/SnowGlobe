@@ -47,6 +47,7 @@ class GlobeViewModel(
                     val secondsElapsed = now.minus(state.updatedAt).inWholeNanoseconds / 1000_000_000f
                     val accelerationScale = 500f
                     val velocityMax = 500f
+                    val bounceFactor = .25f
 
                     state.copy(
                         snowFlakes = state.snowFlakes.map { snowFlake ->
@@ -93,8 +94,8 @@ class GlobeViewModel(
                             val velocityTarget = overlap?.let { other ->
                                 val dx = rectangle.center.x - other.rectangle.center.x
                                 val dy = rectangle.center.y - other.rectangle.center.y
-                                if (abs(dx) > abs(dy)) velocity.copy(x = velocity.x.unaryMinus())
-                                else velocity.copy(y = velocity.y.unaryMinus())
+                                if (abs(dx) > abs(dy)) velocity.copy(x = velocity.x * -bounceFactor)
+                                else velocity.copy(y = velocity.y * -bounceFactor)
                             } ?: velocity
 
                             snowFlake.copy(
