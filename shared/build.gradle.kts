@@ -40,6 +40,14 @@ kotlin {
         }
     }
 
+    sourceSets {
+        all {
+            languageSettings {
+                optIn("kotlin.time.ExperimentalTime")
+            }
+        }
+    }
+
     jvmToolchain(21)
 }
 

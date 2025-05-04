@@ -4,7 +4,6 @@ import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.unit.Velocity
 import kotlin.random.Random
-import kotlin.time.TimeSource
 
 class SnowFlakeSpawner {
 
@@ -21,7 +20,6 @@ class SnowFlakeSpawner {
                 position = Offset(x = x, y = y),
                 size = size,
                 velocity = Velocity.Zero,
-                updatedAt = TimeSource.Monotonic.markNow(),
             )
         }
     }

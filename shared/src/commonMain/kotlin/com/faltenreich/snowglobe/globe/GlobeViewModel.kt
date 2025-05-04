@@ -16,8 +16,8 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import kotlin.math.max
 import kotlin.math.min
+import kotlin.time.Clock
 import kotlin.time.Duration.Companion.milliseconds
-import kotlin.time.TimeSource
 
 class GlobeViewModel(
     private val sensorProvider: SensorProvider,
@@ -42,19 +42,20 @@ class GlobeViewModel(
         viewModelScope.launch {
             while (true) {
                 _state.update { state ->
+                    // FIXME: Velocity starts too slow and builds up too high
+                    val now = Clock.System.now()
+                    val deltaTime = now.minus(state.updatedAt).inWholeNanoseconds / 1_000_000_000f
+
                     state.copy(
                         snowFlakes = state.snowFlakes.map { snowFlake ->
-                            val updatedAt = TimeSource.Monotonic.markNow()
-                            val deltaTime = updatedAt.compareTo(snowFlake.updatedAt)
-
                             val acceleration = Velocity(
                                 x = -state.sensorData.x,
                                 y = state.sensorData.y,
                             )
 
                             val velocity = Velocity(
-                                x = snowFlake.velocity.x + (acceleration.x * deltaTime),
-                                y = snowFlake.velocity.y + (acceleration.y * deltaTime),
+                                x = snowFlake.velocity.x + acceleration.x * deltaTime,
+                                y = snowFlake.velocity.y + acceleration.y * deltaTime,
                             )
 
                             val position = Offset(
@@ -86,12 +87,14 @@ class GlobeViewModel(
                                 .any { other -> other.rectangle.overlaps(rectangle) }
                             snowFlake.copy(
                                 position = if (overlaps) snowFlake.position else rectangle.topLeft,
-                                updatedAt = updatedAt,
+                                velocity = velocity,
                             )
-                        }
+                        },
+                        updatedAt = now,
                     )
                 }
-                delay(10.milliseconds)
+                // TODO: Determine frame rate
+                delay(1.milliseconds)
             }
         }
     }
