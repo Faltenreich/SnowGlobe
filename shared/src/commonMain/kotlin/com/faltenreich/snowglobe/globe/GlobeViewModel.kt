@@ -14,6 +14,7 @@ import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import kotlin.math.abs
 import kotlin.math.max
 import kotlin.math.min
 import kotlin.time.Clock
@@ -85,12 +86,20 @@ class GlobeViewModel(
                                 bottom = positionInBounds.y + snowFlake.size.height,
                             )
 
-                            val overlaps = state.snowFlakes
+                            val overlap = state.snowFlakes
                                 .minus(snowFlake)
-                                .any { other -> other.rectangle.overlaps(rectangle) }
+                                .firstOrNull { other -> other.rectangle.overlaps(rectangle) }
+                            val positionTarget = if (overlap == null) rectangle.topLeft else snowFlake.position
+                            val velocityTarget = overlap?.let { other ->
+                                val dx = rectangle.center.x - other.rectangle.center.x
+                                val dy = rectangle.center.y - other.rectangle.center.y
+                                if (abs(dx) > abs(dy)) velocity.copy(x = velocity.x.unaryMinus())
+                                else velocity.copy(y = velocity.y.unaryMinus())
+                            } ?: velocity
+
                             snowFlake.copy(
-                                position = if (overlaps) snowFlake.position else rectangle.topLeft,
-                                velocity = velocity,
+                                position = positionTarget,
+                                velocity = velocityTarget,
                             )
                         },
                         updatedAt = now,
