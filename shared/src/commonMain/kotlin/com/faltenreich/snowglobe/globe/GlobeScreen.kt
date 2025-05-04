@@ -1,21 +1,19 @@
 package com.faltenreich.snowglobe.globe
 
-import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.onGloballyPositioned
-import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.toSize
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.faltenreich.snowglobe.globe.debug.GlobeDebugInfo
-import com.faltenreich.snowglobe.globe.snowflake.SnowFlake
 import kotlinx.serialization.Serializable
 import org.koin.compose.koinInject
 
@@ -33,7 +31,7 @@ fun GlobeScreen(
 
     Scaffold { padding ->
         Column(modifier = modifier.padding(padding)) {
-            Box(
+            Canvas(
                 modifier = Modifier
                     .fillMaxWidth()
                     .weight(1f)
@@ -42,14 +40,10 @@ fun GlobeScreen(
                     },
             ) {
                 state.snowFlakes.forEach { snowFlake ->
-                    SnowFlake(
-                        state = snowFlake,
-                        modifier = Modifier.offset {
-                            IntOffset(
-                                x = snowFlake.position.x.toInt(),
-                                y = snowFlake.position.y.toInt(),
-                            )
-                        }
+                    drawCircle(
+                        color = Color.White,
+                        radius = snowFlake.size.width / 2,
+                        center = snowFlake.rectangle.center,
                     )
                 }
             }

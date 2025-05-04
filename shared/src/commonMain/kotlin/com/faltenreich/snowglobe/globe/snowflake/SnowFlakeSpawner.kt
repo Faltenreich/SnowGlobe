@@ -11,12 +11,12 @@ class SnowFlakeSpawner {
         canvas: Size,
         count: Int = COUNT,
         size: Size = Size(width = WIDTH, height = HEIGHT),
-    ): List<SnowFlakeState> {
+    ): List<SnowFlake> {
         val random = Random(0)
         return (0 .. count).map {
             val x = random.nextInt(0, canvas.width.toInt()).toFloat()
             val y = random.nextInt(0, canvas.height.toInt()).toFloat()
-            SnowFlakeState(
+            SnowFlake(
                 position = Offset(x = x, y = y),
                 size = size,
                 velocity = Velocity.Zero,
@@ -26,7 +26,7 @@ class SnowFlakeSpawner {
 
     companion object {
 
-        private const val COUNT = 100
+        private const val COUNT = 200
         private const val WIDTH = 10f
         private const val HEIGHT = WIDTH
     }

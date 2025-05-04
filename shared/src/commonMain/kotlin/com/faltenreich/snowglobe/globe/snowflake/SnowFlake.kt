@@ -1,25 +1,21 @@
 package com.faltenreich.snowglobe.globe.snowflake
 
-import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.runtime.Composable
-import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.geometry.Rect
+import androidx.compose.ui.geometry.Size
+import androidx.compose.ui.unit.Velocity
 
-@Composable
-fun SnowFlake(
-    state: SnowFlakeState,
-    modifier: Modifier = Modifier,
-) = with(LocalDensity.current) {
-    Box(
-        modifier = modifier
-            .background(
-                shape = CircleShape,
-                color = Color.White,
-            )
-            .size(state.size.toDpSize()),
-    )
+data class SnowFlake(
+    val position: Offset,
+    val size: Size,
+    val velocity: Velocity,
+) {
+
+    val rectangle: Rect
+        get() = Rect(
+            left = position.x,
+            top = position.y,
+            right = position.x + size.width,
+            bottom = position.y + size.height
+        )
 }
