@@ -1,5 +1,6 @@
 package com.faltenreich.snowglobe.globe
 
+import androidx.compose.ui.geometry.Rect
 import androidx.compose.ui.geometry.Size
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -40,16 +41,16 @@ class GlobeViewModel(
                 _state.update { state ->
                     state.copy(
                         snowFlakes = state.snowFlakes.map { snowFlake ->
-                            val width = snowFlake.coordinates.width
-                            val height = snowFlake.coordinates.height
+                            val width = snowFlake.size.width
+                            val height = snowFlake.size.height
 
                             val (xMin, xMax) = 0f to state.canvas.width - width
                             val (yMin, yMax) = 0f to state.canvas.height - height
 
-                            val x = min(xMax, max(xMin, snowFlake.coordinates.left - state.sensorData.x))
-                            val y = min(yMax, max(yMin, snowFlake.coordinates.top + state.sensorData.y))
+                            val x = min(xMax, max(xMin, snowFlake.position.x - state.sensorData.x))
+                            val y = min(yMax, max(yMin, snowFlake.position.y + state.sensorData.y))
 
-                            val coordinates = snowFlake.coordinates.copy(
+                            val bounds = Rect(
                                 left = x,
                                 top = y,
                                 right = x + width,
@@ -58,9 +59,9 @@ class GlobeViewModel(
 
                             val overlaps = state.snowFlakes
                                 .minus(snowFlake)
-                                .none { it.coordinates.overlaps(coordinates) }
+                                .none { it.dimension.overlaps(bounds) }
                             if (overlaps) {
-                                snowFlake.copy(coordinates = coordinates)
+                                snowFlake.copy(position = bounds.topLeft)
                             } else {
                                 snowFlake
                             }

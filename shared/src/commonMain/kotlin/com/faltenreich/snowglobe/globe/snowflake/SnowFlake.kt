@@ -20,6 +20,6 @@ fun SnowFlake(
                 shape = CircleShape,
                 color = Color.White,
             )
-            .size(state.coordinates.size.toDpSize()),
+            .size(state.size.toDpSize()),
     )
 }

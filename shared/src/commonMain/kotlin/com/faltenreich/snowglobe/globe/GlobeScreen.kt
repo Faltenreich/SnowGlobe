@@ -45,10 +45,9 @@ fun GlobeScreen(
                     SnowFlake(
                         state = snowFlake,
                         modifier = Modifier.offset {
-                            val topLeft = snowFlake.coordinates.topLeft
                             IntOffset(
-                                x = topLeft.x.toInt(),
-                                y = topLeft.y.toInt(),
+                                x = snowFlake.position.x.toInt(),
+                                y = snowFlake.position.y.toInt(),
                             )
                         }
                     )

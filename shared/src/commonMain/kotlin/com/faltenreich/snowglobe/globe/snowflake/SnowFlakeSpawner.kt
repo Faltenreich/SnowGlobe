@@ -1,6 +1,6 @@
 package com.faltenreich.snowglobe.globe.snowflake
 
-import androidx.compose.ui.geometry.Rect
+import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Size
 import kotlin.random.Random
 
@@ -16,12 +16,8 @@ class SnowFlakeSpawner {
             val x = random.nextInt(0, canvas.width.toInt()).toFloat()
             val y = random.nextInt(0, canvas.height.toInt()).toFloat()
             SnowFlakeState(
-                coordinates = Rect(
-                    left = x,
-                    top = y,
-                    right = x + size.width,
-                    bottom = y + size.height,
-                )
+                position = Offset(x = x, y = y),
+                size = size,
             )
         }
     }
