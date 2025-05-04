@@ -48,7 +48,7 @@ class GlobeViewModel(
                             val deltaTime = updatedAt.compareTo(snowFlake.updatedAt)
 
                             val acceleration = Velocity(
-                                x = state.sensorData.x,
+                                x = -state.sensorData.x,
                                 y = state.sensorData.y,
                             )
 
@@ -70,11 +70,11 @@ class GlobeViewModel(
                             )
 
                             val positionInBounds = Offset(
-                                x = min(bounds.right, max(bounds.left, snowFlake.position.x - state.sensorData.x)),
-                                y = min(bounds.bottom, max(bounds.top, snowFlake.position.y + state.sensorData.y)),
+                                x = min(bounds.right, max(bounds.left, position.x)),
+                                y = min(bounds.bottom, max(bounds.top, position.y)),
                             )
 
-                            val dimension = Rect(
+                            val rectangle = Rect(
                                 left = positionInBounds.x,
                                 top = positionInBounds.y,
                                 right = positionInBounds.x + snowFlake.size.width,
@@ -83,9 +83,9 @@ class GlobeViewModel(
 
                             val overlaps = state.snowFlakes
                                 .minus(snowFlake)
-                                .any { it.dimension.overlaps(dimension) }
+                                .any { other -> other.rectangle.overlaps(rectangle) }
                             snowFlake.copy(
-                                position = if (overlaps) snowFlake.position else dimension.topLeft,
+                                position = if (overlaps) snowFlake.position else rectangle.topLeft,
                                 updatedAt = updatedAt,
                             )
                         }

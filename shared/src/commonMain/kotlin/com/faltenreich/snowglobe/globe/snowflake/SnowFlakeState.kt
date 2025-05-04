@@ -13,7 +13,7 @@ data class SnowFlakeState(
     val updatedAt: TimeSource.Monotonic.ValueTimeMark,
 ) {
 
-    val dimension: Rect
+    val rectangle: Rect
         get() = Rect(
             left = position.x,
             top = position.y,
