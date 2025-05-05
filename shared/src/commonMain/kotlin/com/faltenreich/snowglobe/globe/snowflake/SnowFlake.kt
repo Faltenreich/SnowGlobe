@@ -11,11 +11,10 @@ data class SnowFlake(
     val velocity: Velocity,
 ) {
 
-    val rectangle: Rect
-        get() = Rect(
-            left = position.x,
-            top = position.y,
-            right = position.x + size.width,
-            bottom = position.y + size.height
-        )
+    val rectangle: Rect = Rect(
+        left = position.x,
+        top = position.y,
+        right = position.x + size.width,
+        bottom = position.y + size.height
+    )
 }
