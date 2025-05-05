@@ -29,6 +29,7 @@ fun GlobeScreen(
 ) {
     val state = viewModel.state.collectAsStateWithLifecycle()
     val path = remember { Path() }
+    val color = remember { Color.White }
 
     LaunchedEffect(Unit) { viewModel.start() }
 
@@ -45,7 +46,7 @@ fun GlobeScreen(
                 state.value.snowFlakes.forEach { snowFlake ->
                     path.addRect(snowFlake.rectangle)
                 }
-                drawPath(path, color = Color.White)
+                drawPath(path, color = color)
                 path.reset()
             }
             HorizontalDivider()
