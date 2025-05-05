@@ -27,13 +27,13 @@ fun GlobeScreen(
     viewModel: GlobeViewModel = koinInject(),
     modifier: Modifier = Modifier,
 ) {
-    val state = viewModel.state.collectAsStateWithLifecycle().value
+    val state = viewModel.state.collectAsStateWithLifecycle()
     val path = remember { Path() }
 
     LaunchedEffect(Unit) { viewModel.start() }
 
-    Scaffold { padding ->
-        Column(modifier = modifier.padding(padding)) {
+    Scaffold(modifier = modifier) { padding ->
+        Column(modifier = Modifier.padding(padding)) {
             Canvas(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -42,7 +42,7 @@ fun GlobeScreen(
                         viewModel.setup(coordinates.size.toSize())
                     },
             ) {
-                state.snowFlakes.forEach { snowFlake ->
+                state.value.snowFlakes.forEach { snowFlake ->
                     path.addRect(snowFlake.rectangle)
                 }
                 drawPath(path, color = Color.White)
@@ -50,7 +50,7 @@ fun GlobeScreen(
             }
             HorizontalDivider()
             GlobeDebugInfo(
-                state = state,
+                state = state.value,
                 modifier = Modifier.fillMaxWidth(),
             )
         }
