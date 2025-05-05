@@ -40,16 +40,9 @@ class RunLoopUseCase {
                 y = snowFlake.position.y + velocity.y * secondsElapsed,
             )
 
-            val bounds = Rect(
-                left = 0f,
-                top = 0f,
-                right = state.canvas.width - snowFlake.size.width,
-                bottom = state.canvas.height - snowFlake.size.height,
-            )
-
             position = Offset(
-                x = min(bounds.right, max(bounds.left, position.x)),
-                y = min(bounds.bottom, max(bounds.top, position.y)),
+                x = min(state.canvas.width - snowFlake.size.width, max(0f, position.x)),
+                y = min(state.canvas.height - snowFlake.size.height, max(0f, position.y)),
             )
 
             val rectangle = Rect(
