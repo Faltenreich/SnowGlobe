@@ -52,9 +52,9 @@ class RunLoopUseCase {
                 bottom = position.y + snowFlake.size.height,
             )
 
-            val overlap = state.snowFlakes
-                .minus(snowFlake)
-                .firstOrNull { other -> other.rectangle.overlaps(rectangle) }
+            val overlap = state.snowFlakes.firstOrNull { other ->
+                other != snowFlake && other.rectangle.overlaps(rectangle)
+            }
 
             // TODO: Fix clipping by shifting position
             overlap?.let {
