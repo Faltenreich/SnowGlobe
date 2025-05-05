@@ -13,6 +13,7 @@ import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import kotlin.time.Duration.Companion.milliseconds
+import kotlin.time.measureTimedValue
 
 class GlobeViewModel(
     private val sensorProvider: SensorProvider,
@@ -48,8 +49,10 @@ class GlobeViewModel(
 
     private fun startLoop() = viewModelScope.launch {
         while (true) {
-            val state = runLoop(_state.value)
-            _state.update { state }
+            // FIXME: First few times take too long
+            val loop = measureTimedValue { runLoop(_state.value) }
+            println("Loop took ${loop.duration}")
+            _state.update { loop.value }
             // 60 FPS
             delay(16.milliseconds)
         }
