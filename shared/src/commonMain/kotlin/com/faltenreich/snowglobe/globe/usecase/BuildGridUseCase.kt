@@ -24,8 +24,8 @@ class BuildGridUseCase {
             height = bounds.height / cellCountPerDimension,
         )
         val snowFlakeCountPerCell = snowFlakeCount / (cellCountPerDimension * cellCountPerDimension)
-        val cells = (0 .. cellCountPerDimension).map { column ->
-            (0 .. cellCountPerDimension).map { row ->
+        val cells = (0 until cellCountPerDimension).map { column ->
+            (0 until cellCountPerDimension).map { row ->
                 val rectangle = Rect(
                     offset = Offset(
                         x = column * cellSize.width,
@@ -33,7 +33,7 @@ class BuildGridUseCase {
                     ),
                     size = cellSize,
                 )
-                val snowFlakes = (0 .. snowFlakeCountPerCell).map {
+                val snowFlakes = (0 until snowFlakeCountPerCell).map {
                     val x = random.nextInt(rectangle.topLeft.x.toInt(), rectangle.bottomRight.x.toInt()).toFloat()
                     val y = random.nextInt(rectangle.topLeft.y.toInt(), rectangle.bottomRight.y.toInt()).toFloat()
                     SnowFlake(
@@ -57,7 +57,7 @@ class BuildGridUseCase {
     companion object {
 
         private const val CELL_COUNT_PER_DIMENSION = 10
-        private const val SNOW_FLAKE_COUNT = 500
+        private const val SNOW_FLAKE_COUNT = 2000
         private const val SNOW_FLAKE_WIDTH = 10f
         private const val SNOW_FLAKE_HEIGHT = SNOW_FLAKE_WIDTH
     }
