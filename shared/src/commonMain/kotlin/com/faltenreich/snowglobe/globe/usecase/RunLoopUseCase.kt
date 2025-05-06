@@ -71,6 +71,7 @@ class RunLoopUseCase {
                             else velocity.copy(y = velocity.y * -bounceFactor)
                     }
 
+                    // TODO: Assign to cell according to new position
                     snowFlake.copy(
                         position = position,
                         velocity = velocity,

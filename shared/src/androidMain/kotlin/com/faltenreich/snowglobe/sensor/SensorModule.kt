@@ -5,5 +5,5 @@ import org.koin.dsl.bind
 import org.koin.dsl.module
 
 actual fun sensorModule() = module {
-    singleOf(::DemoSensorProvider) bind SensorProvider::class
+    singleOf(::AndroidSensorProvider) bind SensorProvider::class
 }
