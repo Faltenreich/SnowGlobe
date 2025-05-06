@@ -3,8 +3,8 @@ package com.faltenreich.snowglobe.globe
 import androidx.compose.ui.geometry.Size
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.faltenreich.snowglobe.globe.snowflake.SnowFlakeSpawner
 import com.faltenreich.snowglobe.globe.usecase.RunLoopUseCase
+import com.faltenreich.snowglobe.globe.usecase.SpawnSnowFlakesUseCase
 import com.faltenreich.snowglobe.sensor.SensorProvider
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -17,7 +17,7 @@ import kotlin.time.measureTimedValue
 
 class GlobeViewModel(
     private val sensorProvider: SensorProvider,
-    private val snowFlakeSpawner: SnowFlakeSpawner,
+    private val spawnSnowFlakes: SpawnSnowFlakesUseCase,
     private val runLoop: RunLoopUseCase,
 ) : ViewModel() {
 
@@ -28,15 +28,22 @@ class GlobeViewModel(
         initialValue = GlobeState.Initial,
     )
 
-    fun setup(canvas: Size) {
-        _state.update { state ->
-            state.copy(
-                canvas = canvas,
-                snowFlakes = snowFlakeSpawner.spawn(canvas)
-            )
-        }
+    fun setup(bounds: Size) {
+        spawnSprites(bounds)
         observeSensor()
         startLoop()
+    }
+
+    private fun spawnSprites(bounds: Size) = viewModelScope.launch {
+        val snowFlakes = spawnSnowFlakes(bounds)
+        _state.update { state ->
+            state.copy(
+                canvas = state.canvas.copy(
+                    size = bounds,
+                    snowFlakes = snowFlakes,
+                ),
+            )
+        }
     }
 
     private fun observeSensor() = viewModelScope.launch {
@@ -49,10 +56,9 @@ class GlobeViewModel(
 
     private fun startLoop() = viewModelScope.launch {
         while (true) {
-            // FIXME: First few times take too long
-            val loop = measureTimedValue { runLoop(_state.value) }
-            println("Loop took ${loop.duration}")
-            _state.update { loop.value }
+            val update = measureTimedValue { runLoop(_state.value) }
+            println("Loop took ${update.duration}")
+            _state.update { update.value }
             // 60 FPS
             delay(16.milliseconds)
         }

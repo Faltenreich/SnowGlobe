@@ -40,10 +40,10 @@ fun GlobeScreen(
                     .fillMaxWidth()
                     .weight(1f)
                     .onGloballyPositioned { coordinates ->
-                        viewModel.setup(coordinates.size.toSize())
+                        viewModel.setup(bounds = coordinates.size.toSize())
                     },
             ) {
-                state.value.snowFlakes.forEach { snowFlake ->
+                state.value.canvas.snowFlakes.forEach { snowFlake ->
                     path.addRect(snowFlake.rectangle)
                 }
                 drawPath(path, color = color)

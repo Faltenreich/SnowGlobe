@@ -27,7 +27,7 @@ class RunLoopUseCase {
             y = state.sensorData.y * accelerationScale,
         )
 
-        val snowFlakes = state.snowFlakes.map { snowFlake ->
+        val snowFlakes = state.canvas.snowFlakes.map { snowFlake ->
             var velocity = Velocity(
                 x = (snowFlake.velocity.x + acceleration.x * secondsElapsed)
                     .coerceIn(-velocityMax, velocityMax),
@@ -41,8 +41,8 @@ class RunLoopUseCase {
             )
 
             position = Offset(
-                x = min(state.canvas.width - snowFlake.size.width, max(0f, position.x)),
-                y = min(state.canvas.height - snowFlake.size.height, max(0f, position.y)),
+                x = min(state.canvas.size.width - snowFlake.size.width, max(0f, position.x)),
+                y = min(state.canvas.size.height - snowFlake.size.height, max(0f, position.y)),
             )
 
             val rectangle = Rect(
@@ -52,7 +52,7 @@ class RunLoopUseCase {
                 bottom = position.y + snowFlake.size.height,
             )
 
-            val overlap = state.snowFlakes.firstOrNull { other ->
+            val overlap = state.canvas.snowFlakes.firstOrNull { other ->
                 other != snowFlake && other.rectangle.overlaps(rectangle)
             }
 
@@ -71,7 +71,12 @@ class RunLoopUseCase {
                 velocity = velocity,
             )
         }
-        state.copy(snowFlakes = snowFlakes, updatedAt = now)
+        state.copy(
+            updatedAt = now,
+            canvas = state.canvas.copy(
+                snowFlakes = snowFlakes,
+            ),
+        )
     }
 
     companion object {

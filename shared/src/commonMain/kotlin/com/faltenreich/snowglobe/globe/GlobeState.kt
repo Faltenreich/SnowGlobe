@@ -7,19 +7,25 @@ import kotlin.time.Clock
 import kotlin.time.Instant
 
 data class GlobeState(
-    val canvas: Size,
-    val sensorData: SensorData,
-    val snowFlakes: List<SnowFlake>,
     val updatedAt: Instant,
+    val sensorData: SensorData,
+    val canvas: Canvas,
 ) {
+
+    data class Canvas(
+        val size: Size,
+        val snowFlakes: List<SnowFlake>,
+    )
 
     companion object {
 
         val Initial = GlobeState(
-            canvas = Size.Zero,
-            sensorData = SensorData.Zero,
-            snowFlakes = emptyList(),
             updatedAt = Clock.System.now(),
+            sensorData = SensorData.Zero,
+            canvas = Canvas(
+                size = Size.Zero,
+                snowFlakes = emptyList(),
+            ),
         )
     }
 }

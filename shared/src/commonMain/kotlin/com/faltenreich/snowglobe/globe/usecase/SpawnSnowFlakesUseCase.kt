@@ -1,21 +1,24 @@
-package com.faltenreich.snowglobe.globe.snowflake
+package com.faltenreich.snowglobe.globe.usecase
 
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.unit.Velocity
+import com.faltenreich.snowglobe.globe.snowflake.SnowFlake
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 import kotlin.random.Random
 
-class SnowFlakeSpawner {
+class SpawnSnowFlakesUseCase {
 
-    fun spawn(
-        canvas: Size,
+    suspend operator fun invoke(
+        bounds: Size,
         count: Int = COUNT,
         size: Size = Size(width = WIDTH, height = HEIGHT),
-    ): List<SnowFlake> {
+    ): List<SnowFlake> = withContext(Dispatchers.Default) {
         val random = Random(0)
-        return (0 .. count).map {
-            val x = random.nextInt(0, canvas.width.toInt()).toFloat()
-            val y = random.nextInt(0, canvas.height.toInt()).toFloat()
+        (0 .. count).map {
+            val x = random.nextInt(0, bounds.width.toInt()).toFloat()
+            val y = random.nextInt(0, bounds.height.toInt()).toFloat()
             SnowFlake(
                 position = Offset(x = x, y = y),
                 size = size,
