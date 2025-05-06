@@ -43,7 +43,8 @@ fun GlobeScreen(
                         viewModel.setup(bounds = coordinates.size.toSize())
                     },
             ) {
-                state.value.canvas.snowFlakes.forEach { snowFlake ->
+                val snowFlakes = state.value.grid.cells.flatMap(GlobeState.Cell::snowFlakes)
+                snowFlakes.forEach { snowFlake ->
                     path.addRect(snowFlake.rectangle)
                 }
                 drawPath(path, color = color)
