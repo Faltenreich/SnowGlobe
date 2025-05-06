@@ -15,7 +15,7 @@ data class GlobeState(
 
     data class Grid(
         val size: Size,
-        val cells: List<Cell>,
+        val cells: List<List<Cell>>,
     )
 
     data class Cell(

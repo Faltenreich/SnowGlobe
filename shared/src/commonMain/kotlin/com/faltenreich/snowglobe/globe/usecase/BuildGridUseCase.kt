@@ -14,28 +14,40 @@ class BuildGridUseCase {
 
     suspend operator fun invoke(
         bounds: Size,
-        count: Int = SNOW_FLAKE_COUNT,
-        size: Size = Size(width = SNOW_FLAKE_WIDTH, height = SNOW_FLAKE_HEIGHT),
+        snowFlakeCount: Int = SNOW_FLAKE_COUNT,
+        snowFlakeSize: Size = Size(width = SNOW_FLAKE_WIDTH, height = SNOW_FLAKE_HEIGHT),
+        cellCountPerDimension: Int = CELL_COUNT_PER_DIMENSION,
     ): GlobeState.Grid = withContext(Dispatchers.Default) {
         val random = Random(0)
-        val snowFlakes = (0 .. count).map {
-            val x = random.nextInt(0, bounds.width.toInt()).toFloat()
-            val y = random.nextInt(0, bounds.height.toInt()).toFloat()
-            SnowFlake(
-                position = Offset(x = x, y = y),
-                size = size,
-                velocity = Velocity.Zero,
-            )
-        }
-
-        val cell = GlobeState.Cell(
-            rectangle = Rect(
-                offset = Offset.Zero,
-                size = bounds,
-            ),
-            snowFlakes = snowFlakes,
+        val cellSize = Size(
+            width = bounds.width / cellCountPerDimension,
+            height = bounds.height / cellCountPerDimension,
         )
-        val cells = listOf(cell)
+        val snowFlakeCountPerCell = snowFlakeCount / (cellCountPerDimension * cellCountPerDimension)
+        val cells = (0 .. cellCountPerDimension).map { column ->
+            (0 .. cellCountPerDimension).map { row ->
+                val rectangle = Rect(
+                    offset = Offset(
+                        x = column * cellSize.width,
+                        y = row * cellSize.height,
+                    ),
+                    size = cellSize,
+                )
+                val snowFlakes = (0 .. snowFlakeCountPerCell).map {
+                    val x = random.nextInt(rectangle.topLeft.x.toInt(), rectangle.bottomRight.x.toInt()).toFloat()
+                    val y = random.nextInt(rectangle.topLeft.y.toInt(), rectangle.bottomRight.y.toInt()).toFloat()
+                    SnowFlake(
+                        position = Offset(x = x, y = y),
+                        size = snowFlakeSize,
+                        velocity = Velocity.Zero,
+                    )
+                }
+                GlobeState.Cell(
+                    rectangle = rectangle,
+                    snowFlakes = snowFlakes,
+                )
+            }
+        }
         GlobeState.Grid(
             size = bounds,
             cells = cells
@@ -44,6 +56,7 @@ class BuildGridUseCase {
 
     companion object {
 
+        private const val CELL_COUNT_PER_DIMENSION = 10
         private const val SNOW_FLAKE_COUNT = 500
         private const val SNOW_FLAKE_WIDTH = 10f
         private const val SNOW_FLAKE_HEIGHT = SNOW_FLAKE_WIDTH
