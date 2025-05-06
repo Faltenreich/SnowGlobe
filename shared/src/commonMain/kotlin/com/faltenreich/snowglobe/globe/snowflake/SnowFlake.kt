@@ -9,6 +9,7 @@ data class SnowFlake(
     val position: Offset,
     val size: Size,
     val velocity: Velocity,
+    val cellId: Int,
 ) {
 
     val rectangle: Rect = Rect(

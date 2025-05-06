@@ -16,11 +16,12 @@ data class GlobeState(
     data class Grid(
         val size: Size,
         val cells: List<List<Cell>>,
+        val snowFlakes: List<SnowFlake>,
     )
 
     data class Cell(
+        val id: Int,
         val rectangle: Rect,
-        val snowFlakes: List<SnowFlake>,
     )
 
     companion object {
@@ -31,6 +32,7 @@ data class GlobeState(
             grid = Grid(
                 size = Size.Zero,
                 cells = emptyList(),
+                snowFlakes = emptyList(),
             ),
         )
     }
