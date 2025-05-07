@@ -20,12 +20,12 @@ class AndroidSensorProvider(context: Context) : SensorProvider {
 
         override fun onSensorChanged(event: SensorEvent?) {
             event?.takeIf { it.values.size >= 3 } ?: return
-            val data = Acceleration(
+            val acceleration = Acceleration(
                 x = event.values[0],
                 y = event.values[1],
                 z = event.values[2],
             )
-            _acceleration.update { data }
+            _acceleration.update { acceleration }
         }
 
         override fun onAccuracyChanged(sensor: Sensor?, accuracy: Int) = Unit
