@@ -30,10 +30,8 @@ class RunLoopUseCase {
                 var rectangle = snowFlake.rectangle
 
                 var velocity = Velocity(
-                    x = (snowFlake.velocity.x + acceleration.x * secondsElapsed)
-                        .coerceIn(-velocityMax, velocityMax),
-                    y = (snowFlake.velocity.y + acceleration.y * secondsElapsed)
-                        .coerceIn(-velocityMax, velocityMax),
+                    x = (snowFlake.velocity.x + acceleration.x * secondsElapsed).coerceIn(-velocityMax, velocityMax),
+                    y = (snowFlake.velocity.y + acceleration.y * secondsElapsed).coerceIn(-velocityMax, velocityMax),
                 )
 
                 rectangle = Rect(
@@ -67,8 +65,7 @@ class RunLoopUseCase {
                         else velocity.copy(y = velocity.y * -bounceFactor)
                 }
 
-                val cells = state.grid.cells.flatten()
-                val cell = cells.first { rectangle.overlaps(it.rectangle) }
+                val cell = state.grid.cells.flatten().first { rectangle.overlaps(it.rectangle) }
                 snowFlake.copy(
                     cellId = cell.id,
                     position = rectangle.topLeft,
@@ -78,9 +75,7 @@ class RunLoopUseCase {
         }
         state.copy(
             updatedAt = now,
-            grid = state.grid.copy(
-                snowFlakes = snowFlakes,
-            ),
+            grid = state.grid.copy(snowFlakes = snowFlakes),
         )
     }
 
