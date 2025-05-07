@@ -9,6 +9,7 @@ import com.faltenreich.snowglobe.sensor.SensorProvider
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
@@ -30,7 +31,6 @@ class GlobeViewModel(
 
     fun setup(bounds: Size) {
         prepareCanvas(bounds)
-        observeSensor()
         startLoop()
     }
 
@@ -39,19 +39,11 @@ class GlobeViewModel(
         _state.update { it.copy(grid = grid) }
     }
 
-    private fun observeSensor() = viewModelScope.launch{
-        sensorProvider.acceleration.collect { acceleration ->
-            _state.update { state ->
-                state.copy(acceleration = acceleration)
-            }
-        }
-    }
-
     private fun startLoop() = viewModelScope.launch{
         while (true) {
             val update = measureTimedValue { runLoop(_state.value) }
             println("Loop took ${update.duration}")
-            _state.update { update.value }
+            _state.update { update.value.copy(acceleration = sensorProvider.acceleration.first()) }
             // 60 FPS
             delay(16.milliseconds)
         }
