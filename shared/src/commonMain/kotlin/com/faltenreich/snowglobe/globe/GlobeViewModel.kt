@@ -29,7 +29,8 @@ class GlobeViewModel(
     )
 
     fun prepare(bounds: Size) = viewModelScope.launch {
-        _state.update { it.copy(grid = buildGrid(bounds)) }
+        val state = _state.value.copy(grid = buildGrid(bounds))
+        _state.update { state }
     }
 
     fun start() {
@@ -38,9 +39,9 @@ class GlobeViewModel(
 
     fun run() = viewModelScope.launch {
         while (true) {
-            val state = _state.value.copy(acceleration = sensorProvider.acceleration.first())
-            val update = runLoop(state)
-            _state.update { update }
+            val acceleration = sensorProvider.acceleration.first()
+            val state = runLoop(_state.value.copy(acceleration = acceleration))
+            _state.update { state }
             // 60 FPS
             delay(16.milliseconds)
         }
