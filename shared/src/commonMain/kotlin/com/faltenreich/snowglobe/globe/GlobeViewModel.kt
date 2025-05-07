@@ -36,9 +36,9 @@ class GlobeViewModel(
     }
 
     private fun observeSensor() = viewModelScope.launch {
-        sensorProvider.data.collect { sensorData ->
+        sensorProvider.acceleration.collect { acceleration ->
             _state.update { state ->
-                state.copy(sensorData = sensorData)
+                state.copy(acceleration = acceleration)
             }
         }
     }

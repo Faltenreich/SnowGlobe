@@ -21,8 +21,8 @@ class RunLoopUseCase {
         val secondsElapsed = now.minus(state.updatedAt).inWholeNanoseconds / 1000_000_000f
 
         val acceleration = Velocity(
-            x = -state.sensorData.x * accelerationScale,
-            y = state.sensorData.y * accelerationScale,
+            x = -state.acceleration.x * accelerationScale,
+            y = state.acceleration.y * accelerationScale,
         )
 
         val snowFlakes = state.grid.snowFlakes.groupBy { it.cellId }.flatMap { (_, snowFlakesInCell) ->

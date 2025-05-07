@@ -13,14 +13,14 @@ class AndroidSensorProvider(context: Context) : SensorProvider {
     private val sensorManager = context.getSystemService(Context.SENSOR_SERVICE) as SensorManager
     private val sensor = sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER)
 
-    private val _data = MutableStateFlow(SensorData.Zero)
-    override val data = _data
+    private val _data = MutableStateFlow(Acceleration.Zero)
+    override val acceleration = _data
 
     private val listener = object : SensorEventListener {
 
         override fun onSensorChanged(event: SensorEvent?) {
             event?.takeIf { it.values.size >= 3 } ?: return
-            val data = SensorData(
+            val data = Acceleration(
                 x = event.values[0],
                 y = event.values[1],
                 z = event.values[2],

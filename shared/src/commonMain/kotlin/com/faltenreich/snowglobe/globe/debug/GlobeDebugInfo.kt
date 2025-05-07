@@ -19,15 +19,15 @@ fun GlobeDebugInfo(
         Text("Sensor", style = MaterialTheme.typography.titleMedium)
         Row {
             Text("x", modifier = Modifier.weight(1f))
-            Text(state.sensorData.x.toString())
+            Text(state.acceleration.x.toString())
         }
         Row {
             Text("y", modifier = Modifier.weight(1f))
-            Text(state.sensorData.y.toString())
+            Text(state.acceleration.y.toString())
         }
         Row {
             Text("z", modifier = Modifier.weight(1f))
-            Text(state.sensorData.z.toString())
+            Text(state.acceleration.z.toString())
         }
     }
 }

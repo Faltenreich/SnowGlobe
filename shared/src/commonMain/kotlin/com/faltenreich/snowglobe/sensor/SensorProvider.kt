@@ -4,7 +4,7 @@ import kotlinx.coroutines.flow.Flow
 
 interface SensorProvider {
 
-    val data: Flow<SensorData>
+    val acceleration: Flow<Acceleration>
 
     fun start()
 

@@ -10,10 +10,10 @@ class DemoSensorProvider : SensorProvider {
 
     private var isRunning = false
 
-    override val data = flow {
+    override val acceleration = flow {
         while (true) {
             if (isRunning) {
-                val data = SensorData(
+                val data = Acceleration(
                     x = 0f,
                     y = 9f,
                     z = 9f,
