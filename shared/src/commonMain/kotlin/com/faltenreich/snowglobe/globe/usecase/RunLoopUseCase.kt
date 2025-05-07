@@ -7,8 +7,6 @@ import com.faltenreich.snowglobe.globe.GlobeState
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import kotlin.math.abs
-import kotlin.math.max
-import kotlin.math.min
 import kotlin.time.Clock
 
 class RunLoopUseCase {
@@ -48,8 +46,8 @@ class RunLoopUseCase {
 
                 rectangle = Rect(
                     offset = Offset(
-                        x = min(state.grid.size.width - snowFlake.size.width, max(0f, rectangle.topLeft.x)),
-                        y = min(state.grid.size.height - snowFlake.size.height, max(0f, rectangle.topLeft.y)),
+                        x = rectangle.topLeft.x.coerceIn(0f, state.grid.size.width - snowFlake.size.width),
+                        y = rectangle.topLeft.y.coerceIn(0f, state.grid.size.height - snowFlake.size.height),
                     ),
                     size = rectangle.size,
                 )
