@@ -28,14 +28,18 @@ class GlobeViewModel(
         initialValue = GlobeState.Initial,
     )
 
-    fun setup(bounds: Size) = viewModelScope.launch {
-        val grid = buildGrid(bounds)
-        _state.update { it.copy(grid = grid) }
+    fun setup(bounds: Size) {
+        prepareCanvas(bounds)
         observeSensor()
         startLoop()
     }
 
-    private fun observeSensor() = viewModelScope.launch {
+    private fun prepareCanvas(bounds: Size) = viewModelScope.launch{
+        val grid = buildGrid(bounds)
+        _state.update { it.copy(grid = grid) }
+    }
+
+    private fun observeSensor() = viewModelScope.launch{
         sensorProvider.acceleration.collect { acceleration ->
             _state.update { state ->
                 state.copy(acceleration = acceleration)
@@ -43,7 +47,7 @@ class GlobeViewModel(
         }
     }
 
-    private fun startLoop() = viewModelScope.launch {
+    private fun startLoop() = viewModelScope.launch{
         while (true) {
             val update = measureTimedValue { runLoop(_state.value) }
             println("Loop took ${update.duration}")
