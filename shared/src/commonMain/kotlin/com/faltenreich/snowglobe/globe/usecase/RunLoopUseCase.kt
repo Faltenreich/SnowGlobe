@@ -42,6 +42,7 @@ class RunLoopUseCase {
                     size = rectangle.size,
                 )
 
+                // Keep in bounds
                 rectangle = Rect(
                     offset = Offset(
                         x = rectangle.topLeft.x.coerceIn(0f, state.grid.size.width - snowFlake.size.width),
@@ -50,14 +51,12 @@ class RunLoopUseCase {
                     size = rectangle.size,
                 )
 
-                val overlap = snowFlakesInCell.firstOrNull { other ->
-                    other != snowFlake && other.rectangle.overlaps(rectangle)
-                }
-
                 // TODO: Fix clipping by shifting position
+                val overlap = snowFlakesInCell.firstOrNull { it != snowFlake && it.rectangle.overlaps(rectangle) }
                 overlap?.let {
                     rectangle = snowFlake.rectangle
 
+                    // Bounce back
                     val dx = rectangle.center.x - overlap.rectangle.center.x
                     val dy = rectangle.center.y - overlap.rectangle.center.y
                     velocity =
