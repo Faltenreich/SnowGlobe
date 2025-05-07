@@ -69,13 +69,8 @@ class RunLoopUseCase {
                         else velocity.copy(y = velocity.y * -bounceFactor)
                 }
 
-                // TODO: Simplify
-                val rectangle2 = Rect(
-                    offset = rectangle.topLeft,
-                    size = snowFlake.size,
-                )
                 val cells = state.grid.cells.flatten()
-                val cell = cells.first { rectangle2.overlaps(it.rectangle) }
+                val cell = cells.first { rectangle.overlaps(it.rectangle) }
                 snowFlake.copy(
                     cellId = cell.id,
                     position = rectangle.topLeft,
