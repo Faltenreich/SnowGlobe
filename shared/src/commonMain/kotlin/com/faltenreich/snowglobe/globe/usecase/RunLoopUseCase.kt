@@ -36,8 +36,8 @@ class RunLoopUseCase {
 
                 rectangle = Rect(
                     offset = Offset(
-                        x = snowFlake.position.x + velocity.x * secondsElapsed,
-                        y = snowFlake.position.y + velocity.y * secondsElapsed,
+                        x = snowFlake.rectangle.topLeft.x + velocity.x * secondsElapsed,
+                        y = snowFlake.rectangle.topLeft.y + velocity.y * secondsElapsed,
                     ),
                     size = rectangle.size,
                 )
@@ -45,8 +45,8 @@ class RunLoopUseCase {
                 // Keep in bounds
                 rectangle = Rect(
                     offset = Offset(
-                        x = rectangle.topLeft.x.coerceIn(0f, state.grid.size.width - snowFlake.size.width),
-                        y = rectangle.topLeft.y.coerceIn(0f, state.grid.size.height - snowFlake.size.height),
+                        x = rectangle.topLeft.x.coerceIn(0f, state.grid.size.width - snowFlake.rectangle.size.width),
+                        y = rectangle.topLeft.y.coerceIn(0f, state.grid.size.height - snowFlake.rectangle.size.height),
                     ),
                     size = rectangle.size,
                 )
@@ -67,7 +67,7 @@ class RunLoopUseCase {
                 val cell = state.grid.cells.flatten().first { rectangle.overlaps(it.rectangle) }
                 snowFlake.copy(
                     cellId = cell.id,
-                    position = rectangle.topLeft,
+                    rectangle = rectangle,
                     velocity = velocity,
                 )
             }

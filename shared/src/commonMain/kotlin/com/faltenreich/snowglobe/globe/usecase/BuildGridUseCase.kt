@@ -46,8 +46,10 @@ class BuildGridUseCase {
                     val y = random.nextInt(cell.rectangle.topLeft.y.toInt(), cell.rectangle.bottomRight.y.toInt()).toFloat()
                     SnowFlake(
                         cellId = cell.id,
-                        position = Offset(x = x, y = y),
-                        size = snowFlakeSize,
+                        rectangle = Rect(
+                            offset = Offset(x = x, y = y),
+                            size = snowFlakeSize,
+                        ),
                         velocity = Velocity.Zero,
                     )
                 }
