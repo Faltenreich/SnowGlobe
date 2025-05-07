@@ -29,6 +29,8 @@ class RunLoopUseCase {
 
         val snowFlakes = state.grid.snowFlakes.groupBy { it.cellId }.flatMap { (_, snowFlakesInCell) ->
             snowFlakesInCell.map { snowFlake ->
+                var rectangle = snowFlake.rectangle
+
                 var velocity = Velocity(
                     x = (snowFlake.velocity.x + acceleration.x * secondsElapsed)
                         .coerceIn(-velocityMax, velocityMax),
@@ -36,24 +38,20 @@ class RunLoopUseCase {
                         .coerceIn(-velocityMax, velocityMax),
                 )
 
-                var position = Offset(
-                    x = snowFlake.position.x + velocity.x * secondsElapsed,
-                    y = snowFlake.position.y + velocity.y * secondsElapsed,
-                )
-
-                position = Offset(
-                    x = min(state.grid.size.width - snowFlake.size.width, max(0f, position.x)),
-                    y = min(
-                        state.grid.size.height - snowFlake.size.height,
-                        max(0f, position.y)
+                rectangle = Rect(
+                    offset = Offset(
+                        x = snowFlake.position.x + velocity.x * secondsElapsed,
+                        y = snowFlake.position.y + velocity.y * secondsElapsed,
                     ),
+                    size = rectangle.size,
                 )
 
-                val rectangle = Rect(
-                    left = position.x,
-                    top = position.y,
-                    right = position.x + snowFlake.size.width,
-                    bottom = position.y + snowFlake.size.height,
+                rectangle = Rect(
+                    offset = Offset(
+                        x = min(state.grid.size.width - snowFlake.size.width, max(0f, rectangle.topLeft.x)),
+                        y = min(state.grid.size.height - snowFlake.size.height, max(0f, rectangle.topLeft.y)),
+                    ),
+                    size = rectangle.size,
                 )
 
                 val overlap = snowFlakesInCell.firstOrNull { other ->
@@ -62,7 +60,8 @@ class RunLoopUseCase {
 
                 // TODO: Fix clipping by shifting position
                 overlap?.let {
-                    position = snowFlake.position
+                    rectangle = snowFlake.rectangle
+
                     val dx = rectangle.center.x - overlap.rectangle.center.x
                     val dy = rectangle.center.y - overlap.rectangle.center.y
                     velocity =
@@ -72,14 +71,14 @@ class RunLoopUseCase {
 
                 // TODO: Simplify
                 val rectangle2 = Rect(
-                    offset = position,
+                    offset = rectangle.topLeft,
                     size = snowFlake.size,
                 )
                 val cells = state.grid.cells.flatten()
                 val cell = cells.first { rectangle2.overlaps(it.rectangle) }
                 snowFlake.copy(
                     cellId = cell.id,
-                    position = position,
+                    position = rectangle.topLeft,
                     velocity = velocity,
                 )
             }
