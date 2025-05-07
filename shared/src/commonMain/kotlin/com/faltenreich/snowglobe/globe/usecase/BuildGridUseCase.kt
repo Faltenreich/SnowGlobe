@@ -1,11 +1,11 @@
 package com.faltenreich.snowglobe.globe.usecase
 
 import androidx.compose.ui.geometry.Offset
-import androidx.compose.ui.geometry.Rect
 import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.unit.Velocity
 import com.faltenreich.snowglobe.globe.canvas.Cell
 import com.faltenreich.snowglobe.globe.canvas.Grid
+import com.faltenreich.snowglobe.globe.canvas.Rectangle
 import com.faltenreich.snowglobe.globe.snowflake.SnowFlake
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
@@ -26,7 +26,7 @@ class BuildGridUseCase {
         )
         val cells = (0 until cellCountPerDimension).map { row ->
             (0 until cellCountPerDimension).map { column ->
-                val rectangle = Rect(
+                val rectangle = Rectangle(
                     offset = Offset(
                         x = row * cellSize.width,
                         y = column * cellSize.height,
@@ -47,7 +47,7 @@ class BuildGridUseCase {
                     val y = random.nextInt(cell.rectangle.topLeft.y.toInt(), cell.rectangle.bottomRight.y.toInt()).toFloat()
                     SnowFlake(
                         cellId = cell.id,
-                        rectangle = Rect(
+                        rectangle = Rectangle(
                             offset = Offset(x = x, y = y),
                             size = snowFlakeSize,
                         ),

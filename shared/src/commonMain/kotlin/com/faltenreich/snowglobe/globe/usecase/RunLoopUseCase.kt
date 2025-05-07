@@ -1,9 +1,9 @@
 package com.faltenreich.snowglobe.globe.usecase
 
 import androidx.compose.ui.geometry.Offset
-import androidx.compose.ui.geometry.Rect
 import androidx.compose.ui.unit.Velocity
 import com.faltenreich.snowglobe.globe.GlobeState
+import com.faltenreich.snowglobe.globe.canvas.Rectangle
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import kotlin.math.abs
@@ -34,7 +34,7 @@ class RunLoopUseCase {
                     y = (snowFlake.velocity.y + acceleration.y * secondsElapsed).coerceIn(-velocityMax, velocityMax),
                 )
 
-                rectangle = Rect(
+                rectangle = Rectangle(
                     offset = Offset(
                         x = snowFlake.rectangle.topLeft.x + velocity.x * secondsElapsed,
                         y = snowFlake.rectangle.topLeft.y + velocity.y * secondsElapsed,
@@ -43,7 +43,7 @@ class RunLoopUseCase {
                 )
 
                 // Keep in bounds
-                rectangle = Rect(
+                rectangle = Rectangle(
                     offset = Offset(
                         x = rectangle.topLeft.x.coerceIn(0f, state.grid.size.width - snowFlake.rectangle.size.width),
                         y = rectangle.topLeft.y.coerceIn(0f, state.grid.size.height - snowFlake.rectangle.size.height),
