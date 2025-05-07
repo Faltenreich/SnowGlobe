@@ -4,7 +4,8 @@ import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Rect
 import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.unit.Velocity
-import com.faltenreich.snowglobe.globe.GlobeState
+import com.faltenreich.snowglobe.globe.canvas.Cell
+import com.faltenreich.snowglobe.globe.canvas.Grid
 import com.faltenreich.snowglobe.globe.snowflake.SnowFlake
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
@@ -17,7 +18,7 @@ class BuildGridUseCase {
         snowFlakeCount: Int = SNOW_FLAKE_COUNT,
         snowFlakeSize: Size = Size(width = SNOW_FLAKE_WIDTH, height = SNOW_FLAKE_HEIGHT),
         cellCountPerDimension: Int = CELL_COUNT_PER_DIMENSION,
-    ): GlobeState.Grid = withContext(Dispatchers.Default) {
+    ): Grid = withContext(Dispatchers.Default) {
         val random = Random(0)
         val cellSize = Size(
             width = bounds.width / cellCountPerDimension,
@@ -32,7 +33,7 @@ class BuildGridUseCase {
                     ),
                     size = cellSize,
                 )
-                GlobeState.Cell(
+                Cell(
                     id = (row * cellCountPerDimension) + column,
                     rectangle = rectangle,
                 )
@@ -55,7 +56,7 @@ class BuildGridUseCase {
                 }
             }
         }
-        GlobeState.Grid(
+        Grid(
             size = bounds,
             cells = cells,
             snowFlakes = snowFlakes,
