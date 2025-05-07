@@ -53,7 +53,6 @@ class GlobeViewModel(
         sensorProvider.start()
     }
 
-    @Suppress("unused")
     fun stop() {
         sensorProvider.stop()
     }

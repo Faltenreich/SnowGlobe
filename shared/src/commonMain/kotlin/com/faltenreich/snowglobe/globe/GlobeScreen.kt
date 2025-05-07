@@ -7,6 +7,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
@@ -32,6 +33,7 @@ fun GlobeScreen(
     val color = remember { Color.White }
 
     LaunchedEffect(Unit) { viewModel.start() }
+    DisposableEffect(Unit) { onDispose { viewModel.stop() } }
 
     Scaffold(modifier = modifier) { padding ->
         Column(modifier = Modifier.padding(padding)) {
