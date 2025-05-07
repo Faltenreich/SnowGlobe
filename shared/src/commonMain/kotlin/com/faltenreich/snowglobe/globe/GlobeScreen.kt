@@ -42,7 +42,8 @@ fun GlobeScreen(
                     .fillMaxWidth()
                     .weight(1f)
                     .onGloballyPositioned { coordinates ->
-                        viewModel.setup(bounds = coordinates.size.toSize())
+                        viewModel.prepare(coordinates.size.toSize())
+                        viewModel.run()
                     },
             ) {
                 val snowFlakes = state.value.grid.snowFlakes

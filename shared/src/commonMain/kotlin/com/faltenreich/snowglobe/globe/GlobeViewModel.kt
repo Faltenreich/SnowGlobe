@@ -14,7 +14,6 @@ import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import kotlin.time.Duration.Companion.milliseconds
-import kotlin.time.measureTimedValue
 
 class GlobeViewModel(
     private val sensorProvider: SensorProvider,
@@ -29,28 +28,22 @@ class GlobeViewModel(
         initialValue = GlobeState.Initial,
     )
 
-    fun setup(bounds: Size) {
-        prepareCanvas(bounds)
-        startLoop()
-    }
-
-    private fun prepareCanvas(bounds: Size) = viewModelScope.launch{
-        val grid = buildGrid(bounds)
-        _state.update { it.copy(grid = grid) }
-    }
-
-    private fun startLoop() = viewModelScope.launch{
-        while (true) {
-            val update = measureTimedValue { runLoop(_state.value) }
-            println("Loop took ${update.duration}")
-            _state.update { update.value.copy(acceleration = sensorProvider.acceleration.first()) }
-            // 60 FPS
-            delay(16.milliseconds)
-        }
+    fun prepare(bounds: Size) = viewModelScope.launch {
+        _state.update { it.copy(grid = buildGrid(bounds)) }
     }
 
     fun start() {
         sensorProvider.start()
+    }
+
+    fun run() = viewModelScope.launch {
+        while (true) {
+            val state = _state.value.copy(acceleration = sensorProvider.acceleration.first())
+            val update = runLoop(state)
+            _state.update { update }
+            // 60 FPS
+            delay(16.milliseconds)
+        }
     }
 
     fun stop() {
