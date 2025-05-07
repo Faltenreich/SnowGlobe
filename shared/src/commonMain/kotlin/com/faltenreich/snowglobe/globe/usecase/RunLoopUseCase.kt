@@ -49,7 +49,7 @@ class RunLoopUseCase {
                     ),
                 )
 
-                var rectangle = Rect(
+                val rectangle = Rect(
                     left = position.x,
                     top = position.y,
                     right = position.x + snowFlake.size.width,
@@ -62,8 +62,7 @@ class RunLoopUseCase {
 
                 // TODO: Fix clipping by shifting position
                 overlap?.let {
-                    rectangle = snowFlake.rectangle
-
+                    position = snowFlake.position
                     val dx = rectangle.center.x - overlap.rectangle.center.x
                     val dy = rectangle.center.y - overlap.rectangle.center.y
                     velocity =
@@ -71,8 +70,13 @@ class RunLoopUseCase {
                         else velocity.copy(y = velocity.y * -bounceFactor)
                 }
 
+                // TODO: Simplify
+                val rectangle2 = Rect(
+                    offset = position,
+                    size = snowFlake.size,
+                )
                 val cells = state.grid.cells.flatten()
-                val cell = cells.first { rectangle.overlaps(it.rectangle) }
+                val cell = cells.first { rectangle2.overlaps(it.rectangle) }
                 snowFlake.copy(
                     cellId = cell.id,
                     position = position,
