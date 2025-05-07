@@ -13,12 +13,12 @@ class DemoSensorProvider : SensorProvider {
     override val acceleration = flow {
         while (true) {
             if (isRunning) {
-                val data = Acceleration(
+                val acceleration = Acceleration(
                     x = 0f,
                     y = 9f,
                     z = 9f,
                 )
-                emit(data)
+                emit(acceleration)
                 delay(100.milliseconds)
             }
         }
