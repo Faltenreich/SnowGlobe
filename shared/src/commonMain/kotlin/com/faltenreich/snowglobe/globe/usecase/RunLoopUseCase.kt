@@ -19,7 +19,7 @@ class RunLoopUseCase {
     ): GlobeState = withContext(Dispatchers.Default) {
         val now = Clock.System.now()
         val secondsElapsed = now.minus(state.updatedAt).inWholeNanoseconds / 1000_000_000f
-
+        val cells = state.grid.cells.flatten()
         val acceleration = Velocity(
             x = -state.acceleration.x * accelerationScale,
             y = state.acceleration.y * accelerationScale,
@@ -52,7 +52,6 @@ class RunLoopUseCase {
                     size = rectangle.size,
                 )
 
-                // TODO: Fix clipping by shifting position
                 val overlap = snowFlakesInCell.firstOrNull { it != snowFlake && it.rectangle.overlaps(rectangle) }
                 overlap?.let {
                     rectangle = snowFlake.rectangle
@@ -65,7 +64,7 @@ class RunLoopUseCase {
                         else velocity.copy(y = velocity.y * -bounceFactor)
                 }
 
-                val cell = state.grid.cells.flatten().first { rectangle.overlaps(it.rectangle) }
+                val cell = cells.first { rectangle.overlaps(it.rectangle) }
                 snowFlake.copy(
                     cellId = cell.id,
                     rectangle = rectangle,
