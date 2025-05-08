@@ -28,16 +28,17 @@ class RunLoopUseCase {
         val snowFlakes = state.grid.snowFlakes.groupBy { it.cellId }.flatMap { (_, snowFlakesInCell) ->
             snowFlakesInCell.map { snowFlake ->
                 var rectangle = snowFlake.rectangle
+                var velocity = snowFlake.velocity
 
-                var velocity = Velocity(
-                    x = (snowFlake.velocity.x + acceleration.x * secondsElapsed).coerceIn(-velocityMax, velocityMax),
-                    y = (snowFlake.velocity.y + acceleration.y * secondsElapsed).coerceIn(-velocityMax, velocityMax),
+                velocity = Velocity(
+                    x = (velocity.x + acceleration.x * secondsElapsed).coerceIn(-velocityMax, velocityMax),
+                    y = (velocity.y + acceleration.y * secondsElapsed).coerceIn(-velocityMax, velocityMax),
                 )
 
                 rectangle = Rectangle(
                     offset = Offset(
-                        x = snowFlake.rectangle.topLeft.x + velocity.x * secondsElapsed,
-                        y = snowFlake.rectangle.topLeft.y + velocity.y * secondsElapsed,
+                        x = rectangle.topLeft.x + velocity.x * secondsElapsed,
+                        y = rectangle.topLeft.y + velocity.y * secondsElapsed,
                     ),
                     size = rectangle.size,
                 )
@@ -45,8 +46,8 @@ class RunLoopUseCase {
                 // Keep in bounds
                 rectangle = Rectangle(
                     offset = Offset(
-                        x = rectangle.topLeft.x.coerceIn(0f, state.grid.size.width - snowFlake.rectangle.size.width),
-                        y = rectangle.topLeft.y.coerceIn(0f, state.grid.size.height - snowFlake.rectangle.size.height),
+                        x = rectangle.topLeft.x.coerceIn(0f, state.grid.size.width - rectangle.size.width),
+                        y = rectangle.topLeft.y.coerceIn(0f, state.grid.size.height - rectangle.size.height),
                     ),
                     size = rectangle.size,
                 )
