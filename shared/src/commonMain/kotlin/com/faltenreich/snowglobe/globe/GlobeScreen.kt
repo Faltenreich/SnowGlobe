@@ -48,7 +48,7 @@ fun GlobeScreen(
             ) {
                 val snowFlakes = state.value.grid.snowFlakes
                 snowFlakes.forEach { snowFlake ->
-                    path.addOval(snowFlake.rect)
+                    path.addOval(snowFlake.rectangle)
                 }
                 drawPath(path, color = color)
                 path.reset()
