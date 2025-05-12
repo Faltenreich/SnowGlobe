@@ -35,12 +35,11 @@ class RunLoopUseCase {
                     y = (velocity.y + acceleration.y * secondsElapsed).coerceIn(-velocityMax, velocityMax),
                 )
 
-                rectangle = Rect(
+                rectangle = rectangle.translate(
                     offset = Offset(
-                        x = rectangle.topLeft.x + velocity.x * secondsElapsed,
-                        y = rectangle.topLeft.y + velocity.y * secondsElapsed,
+                        x = velocity.x * secondsElapsed,
+                        y = velocity.y * secondsElapsed,
                     ),
-                    size = rectangle.size,
                 )
 
                 // Keep in bounds
