@@ -46,17 +46,8 @@ class RunLoopUseCase {
                 if (rectangle.isLeaving(state.grid.rectangle)) {
                     snowFlake.copy(velocity = snowFlake.velocity * -bounceFactor)
                 } else {
-                    rectangle = Rect(
-                        offset = Offset(
-                            x = rectangle.topLeft.x.coerceIn(0f, state.grid.rectangle.width - rectangle.size.width),
-                            y = rectangle.topLeft.y.coerceIn(0f, state.grid.rectangle.height - rectangle.size.height),
-                        ),
-                        size = rectangle.size,
-                    )
-
                     val overlap = snowFlakesInCell.firstOrNull { it != snowFlake && it.rectangle.overlaps(rectangle) }
                     overlap?.let {
-
                         // Bounce back
                         val dx = rectangle.center.x - overlap.rectangle.center.x
                         val dy = rectangle.center.y - overlap.rectangle.center.y
