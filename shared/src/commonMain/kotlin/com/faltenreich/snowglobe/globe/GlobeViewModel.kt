@@ -1,5 +1,6 @@
 package com.faltenreich.snowglobe.globe
 
+import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Size
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -49,5 +50,9 @@ class GlobeViewModel(
 
     fun stop() {
         sensorProvider.stop()
+    }
+
+    fun touch(position: Offset) {
+        _state.update { it.copy(showUi = !it.showUi) }
     }
 }

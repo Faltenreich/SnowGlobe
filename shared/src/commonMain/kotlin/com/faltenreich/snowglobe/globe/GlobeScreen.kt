@@ -1,16 +1,22 @@
 package com.faltenreich.snowglobe.globe
 
 import androidx.compose.foundation.Canvas
-import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.gestures.detectTapGestures
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.material3.HorizontalDivider
+import androidx.compose.foundation.layout.padding
+import androidx.compose.material3.BottomAppBar
+import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.remember
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Path
+import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.unit.toSize
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -33,14 +39,16 @@ fun GlobeScreen(
     LaunchedEffect(Unit) { viewModel.start() }
     DisposableEffect(Unit) { onDispose { viewModel.stop() } }
 
-    Column(modifier = modifier) {
+    Box(modifier = modifier) {
         Canvas(
             modifier = Modifier
-                .fillMaxWidth()
-                .weight(1f)
+                .fillMaxSize()
                 .onGloballyPositioned { coordinates ->
                     viewModel.prepare(coordinates.size.toSize())
                     viewModel.run()
+                }
+                .pointerInput(Unit) {
+                    detectTapGestures(onTap = viewModel::touch)
                 },
         ) {
             if (state.showDebugInfo) {
@@ -64,12 +72,30 @@ fun GlobeScreen(
             drawPath(path, color = color)
             path.reset()
         }
-        if (state.showDebugInfo) {
-            HorizontalDivider()
-            GlobeDebugInfo(
-                state = state,
-                modifier = Modifier.fillMaxWidth(),
-            )
+
+        if (state.showUi) {
+            Scaffold(
+                containerColor = Color.Transparent,
+                bottomBar = {
+                    BottomAppBar {
+
+                    }
+                },
+            ) { padding ->
+                Box(
+                    modifier = Modifier
+                        .padding(padding)
+                        .fillMaxSize(),
+                    contentAlignment = Alignment.BottomCenter,
+                ) {
+                    if (state.showDebugInfo) {
+                        GlobeDebugInfo(
+                            state = state,
+                            modifier = Modifier.fillMaxWidth(),
+                        )
+                    }
+                }
+            }
         }
     }
 }
