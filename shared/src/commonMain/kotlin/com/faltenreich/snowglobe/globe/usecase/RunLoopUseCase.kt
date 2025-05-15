@@ -43,38 +43,45 @@ class RunLoopUseCase {
                 )
 
                 // Keep in bounds
-                rectangle = Rect(
-                    offset = Offset(
-                        x = rectangle.topLeft.x.coerceIn(0f, state.grid.size.width - rectangle.size.width),
-                        y = rectangle.topLeft.y.coerceIn(0f, state.grid.size.height - rectangle.size.height),
-                    ),
-                    size = rectangle.size,
-                )
+                if (rectangle.isLeaving(state.grid.rectangle)) {
+                    snowFlake.copy(velocity = snowFlake.velocity * -bounceFactor)
+                } else {
+                    rectangle = Rect(
+                        offset = Offset(
+                            x = rectangle.topLeft.x.coerceIn(0f, state.grid.rectangle.width - rectangle.size.width),
+                            y = rectangle.topLeft.y.coerceIn(0f, state.grid.rectangle.height - rectangle.size.height),
+                        ),
+                        size = rectangle.size,
+                    )
 
-                val overlap = snowFlakesInCell.firstOrNull { it != snowFlake && it.rectangle.overlaps(rectangle) }
-                overlap?.let {
-                    rectangle = snowFlake.rectangle
+                    val overlap = snowFlakesInCell.firstOrNull { it != snowFlake && it.rectangle.overlaps(rectangle) }
+                    overlap?.let {
 
-                    // Bounce back
-                    val dx = rectangle.center.x - overlap.rectangle.center.x
-                    val dy = rectangle.center.y - overlap.rectangle.center.y
-                    velocity =
-                        if (abs(dx) > abs(dy)) velocity.copy(x = velocity.x * -bounceFactor)
-                        else velocity.copy(y = velocity.y * -bounceFactor)
+                        // Bounce back
+                        val dx = rectangle.center.x - overlap.rectangle.center.x
+                        val dy = rectangle.center.y - overlap.rectangle.center.y
+                        velocity =
+                            if (abs(dx) > abs(dy)) velocity.copy(x = velocity.x * -bounceFactor)
+                            else velocity.copy(y = velocity.y * -bounceFactor)
+                    }
+
+                    val cell = cells.first { rectangle.overlaps(it.rectangle) }
+                    snowFlake.copy(
+                        cellId = cell.id,
+                        rectangle = rectangle,
+                        velocity = velocity,
+                    )
                 }
-
-                val cell = cells.first { rectangle.overlaps(it.rectangle) }
-                snowFlake.copy(
-                    cellId = cell.id,
-                    rectangle = rectangle,
-                    velocity = velocity,
-                )
             }
         }
         state.copy(
             updatedAt = now,
             grid = state.grid.copy(snowFlakes = snowFlakes),
         )
+    }
+
+    private fun Rect.isLeaving(other: Rect): Boolean {
+        return left < other.left ||top < other.top || right > other.right || bottom > other.bottom
     }
 
     companion object {

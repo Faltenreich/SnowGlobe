@@ -64,7 +64,10 @@ class BuildGridUseCase {
             }
         }
         Grid(
-            size = bounds,
+            rectangle = Rect(
+                offset = Offset.Zero,
+                size = bounds,
+            ),
             cells = grid,
             snowFlakes = snowFlakes,
         )

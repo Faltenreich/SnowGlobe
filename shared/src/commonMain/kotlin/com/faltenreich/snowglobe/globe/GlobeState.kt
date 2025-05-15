@@ -1,5 +1,7 @@
 package com.faltenreich.snowglobe.globe
 
+import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.geometry.Rect
 import androidx.compose.ui.geometry.Size
 import com.faltenreich.snowglobe.globe.canvas.Grid
 import com.faltenreich.snowglobe.sensor.Acceleration
@@ -18,7 +20,10 @@ data class GlobeState(
             updatedAt = Clock.System.now(),
             acceleration = Acceleration.Zero,
             grid = Grid(
-                size = Size.Zero,
+                rectangle = Rect(
+                    offset = Offset.Zero,
+                    size = Size.Zero,
+                ),
                 cells = emptyList(),
                 snowFlakes = emptyList(),
             ),
