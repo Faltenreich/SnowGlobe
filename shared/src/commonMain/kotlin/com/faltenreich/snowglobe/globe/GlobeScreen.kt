@@ -46,6 +46,19 @@ fun GlobeScreen(
                         viewModel.run()
                     },
             ) {
+                state.value.grid.cells.flatten().forEach { cell ->
+                    drawLine(
+                        color = color,
+                        start = cell.rectangle.topLeft,
+                        end = cell.rectangle.topRight,
+                    )
+                    drawLine(
+                        color = color,
+                        start = cell.rectangle.topRight,
+                        end = cell.rectangle.bottomRight,
+                    )
+                }
+
                 val snowFlakes = state.value.grid.snowFlakes
                 snowFlakes.forEach { snowFlake ->
                     path.addOval(snowFlake.rectangle)
