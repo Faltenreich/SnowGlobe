@@ -3,9 +3,7 @@ package com.faltenreich.snowglobe.globe
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.HorizontalDivider
-import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
@@ -28,25 +26,25 @@ fun GlobeScreen(
     viewModel: GlobeViewModel = koinInject(),
     modifier: Modifier = Modifier,
 ) {
-    val state = viewModel.state.collectAsStateWithLifecycle()
+    val state = viewModel.state.collectAsStateWithLifecycle().value
     val path = remember { Path() }
     val color = remember { Color.White }
 
     LaunchedEffect(Unit) { viewModel.start() }
     DisposableEffect(Unit) { onDispose { viewModel.stop() } }
 
-    Scaffold(modifier = modifier) { padding ->
-        Column(modifier = Modifier.padding(padding)) {
-            Canvas(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .weight(1f)
-                    .onGloballyPositioned { coordinates ->
-                        viewModel.prepare(coordinates.size.toSize())
-                        viewModel.run()
-                    },
-            ) {
-                state.value.grid.cells.flatten().forEach { cell ->
+    Column(modifier = modifier) {
+        Canvas(
+            modifier = Modifier
+                .fillMaxWidth()
+                .weight(1f)
+                .onGloballyPositioned { coordinates ->
+                    viewModel.prepare(coordinates.size.toSize())
+                    viewModel.run()
+                },
+        ) {
+            if (state.showDebugInfo) {
+                state.grid.cells.flatten().forEach { cell ->
                     drawLine(
                         color = color,
                         start = cell.rectangle.topLeft,
@@ -58,17 +56,18 @@ fun GlobeScreen(
                         end = cell.rectangle.bottomRight,
                     )
                 }
-
-                val snowFlakes = state.value.grid.snowFlakes
-                snowFlakes.forEach { snowFlake ->
-                    path.addOval(snowFlake.rectangle)
-                }
-                drawPath(path, color = color)
-                path.reset()
             }
+
+            state.grid.snowFlakes.forEach { snowFlake ->
+                path.addOval(snowFlake.rectangle)
+            }
+            drawPath(path, color = color)
+            path.reset()
+        }
+        if (state.showDebugInfo) {
             HorizontalDivider()
             GlobeDebugInfo(
-                state = state.value,
+                state = state,
                 modifier = Modifier.fillMaxWidth(),
             )
         }
