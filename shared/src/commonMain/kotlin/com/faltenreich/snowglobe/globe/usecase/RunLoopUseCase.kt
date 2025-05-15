@@ -42,27 +42,29 @@ class RunLoopUseCase {
                     ),
                 )
 
-                // Keep in bounds
                 if (rectangle.isLeaving(state.grid.rectangle)) {
-                    snowFlake.copy(velocity = snowFlake.velocity * -bounceFactor)
+                    // Keep in bounds
+                    rectangle = snowFlake.rectangle
+                    velocity = snowFlake.velocity * -bounceFactor
                 } else {
                     val overlap = snowFlakesInCell.firstOrNull { it != snowFlake && it.rectangle.overlaps(rectangle) }
                     overlap?.let {
                         // Bounce back
+                        rectangle = snowFlake.rectangle
                         val dx = rectangle.center.x - overlap.rectangle.center.x
                         val dy = rectangle.center.y - overlap.rectangle.center.y
                         velocity =
                             if (abs(dx) > abs(dy)) velocity.copy(x = velocity.x * -bounceFactor)
                             else velocity.copy(y = velocity.y * -bounceFactor)
                     }
-
-                    val cell = cells.first { rectangle.overlaps(it.rectangle) }
-                    snowFlake.copy(
-                        cellId = cell.id,
-                        rectangle = rectangle,
-                        velocity = velocity,
-                    )
                 }
+
+                val cell = cells.first { rectangle.overlaps(it.rectangle) }
+                snowFlake.copy(
+                    cellId = cell.id,
+                    rectangle = rectangle,
+                    velocity = velocity,
+                )
             }
         }
         state.copy(
