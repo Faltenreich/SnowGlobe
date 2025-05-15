@@ -1,13 +1,13 @@
 [versions]
-aboutlibraries = "11.6.3"
+aboutlibraries = "12.1.2"
 activity-compose = "1.10.1"
 android-gradle = "8.9.2"
-android-lifecycle-compose = "2.8.7"
-compose = "1.7.3"
+android-lifecycle-compose = "2.9.0"
+compose = "1.8.0"
 compose-navigation = "2.8.0-alpha13"
 coroutines = "1.10.2"
 koin = "4.0.4"
-kotlin = "2.1.20"
+kotlin = "2.1.21"
 kotlin-serialization = "1.8.1"
 
 [libraries]
