@@ -38,6 +38,10 @@ class GlobeViewModel(
         sensorProvider.start()
     }
 
+    fun restart() {
+        prepare(bounds = _state.value.grid.rectangle.size)
+    }
+
     fun run() = viewModelScope.launch {
         while (true) {
             val acceleration = sensorProvider.acceleration.first()

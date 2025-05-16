@@ -4,7 +4,9 @@ import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.material3.Icon
 import androidx.compose.material3.NavigationBar
+import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
@@ -20,7 +22,9 @@ import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.unit.toSize
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import com.faltenreich.snowglobe.globe.debug.GlobeDebugInfo
+import com.composables.icons.lucide.ListRestart
+import com.composables.icons.lucide.Lucide
+import com.faltenreich.snowglobe.globe.overlay.GlobeDebugInfo
 import dev.chrisbanes.haze.hazeEffect
 import dev.chrisbanes.haze.hazeSource
 import dev.chrisbanes.haze.materials.HazeMaterials
@@ -63,15 +67,19 @@ fun GlobeScreen(
         },
         bottomBar = {
             if (state.showUi) {
-            NavigationBar(
-                containerColor = Color.Transparent,
-                modifier = Modifier
-                    .hazeEffect(state = hazeState, style = HazeMaterials.ultraThin())
-                    .fillMaxWidth(),
-            ) {
-                /* todo */
-            }
+                NavigationBar(
+                    containerColor = Color.Transparent,
+                    modifier = Modifier
+                        .hazeEffect(state = hazeState, style = HazeMaterials.ultraThin())
+                        .fillMaxWidth(),
+                ) {
+                    NavigationBarItem(
+                        selected = false,
+                        onClick = viewModel::restart,
+                        icon = { Icon(Lucide.ListRestart, contentDescription = null) },
+                    )
                 }
+            }
         },
     ) { _ ->
         Canvas(

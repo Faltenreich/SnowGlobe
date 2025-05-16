@@ -1,4 +1,4 @@
-package com.faltenreich.snowglobe.globe.debug
+package com.faltenreich.snowglobe.globe.overlay
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
