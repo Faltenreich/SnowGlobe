@@ -2,13 +2,13 @@ package com.faltenreich.snowglobe.globe
 
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.gestures.detectTapGestures
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.BottomAppBar
+import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Text
+import androidx.compose.material3.TopAppBar
+import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
@@ -18,10 +18,13 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Path
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.onGloballyPositioned
-import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.toSize
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.faltenreich.snowglobe.globe.debug.GlobeDebugInfo
+import dev.chrisbanes.haze.hazeEffect
+import dev.chrisbanes.haze.hazeSource
+import dev.chrisbanes.haze.materials.HazeMaterials
+import dev.chrisbanes.haze.rememberHazeState
 import kotlinx.serialization.Serializable
 import org.koin.compose.koinInject
 
@@ -37,53 +40,67 @@ fun GlobeScreen(
     val path = remember { Path() }
     val color = remember { Color.White }
 
+    val hazeState = rememberHazeState()
+
     LaunchedEffect(Unit) { viewModel.start() }
     DisposableEffect(Unit) { onDispose { viewModel.stop() } }
 
     Scaffold(
         modifier = modifier,
-        bottomBar = {
+        topBar = {
             if (state.showUi) {
-                BottomAppBar {
-                    // TODO
-                }
+                TopAppBar(
+                    title = { Text("Snow Globe") },
+                    modifier = Modifier
+                        .hazeEffect(state = hazeState, style = HazeMaterials.ultraThin())
+                        .fillMaxWidth(),
+                    colors = TopAppBarDefaults.largeTopAppBarColors(Color.Transparent),
+                )
             }
         },
-    ) { padding ->
-        Column {
-            Canvas(
+        bottomBar = {
+            if (state.showUi) {
+            NavigationBar(
+                containerColor = Color.Transparent,
                 modifier = Modifier
-                    .fillMaxSize()
-                    .padding(if (state.showUi) padding else PaddingValues(all = 0.dp))
-                    .onGloballyPositioned { coordinates ->
-                        viewModel.prepare(coordinates.size.toSize())
-                        viewModel.run()
-                    }
-                    .pointerInput(Unit) {
-                        detectTapGestures(onTap = viewModel::touch)
-                    },
+                    .hazeEffect(state = hazeState, style = HazeMaterials.ultraThin())
+                    .fillMaxWidth(),
             ) {
-                if (state.showDebugInfo) {
-                    state.grid.cells.flatten().forEach { cell ->
-                        drawLine(
-                            color = color,
-                            start = cell.rectangle.topLeft,
-                            end = cell.rectangle.topRight,
-                        )
-                        drawLine(
-                            color = color,
-                            start = cell.rectangle.topRight,
-                            end = cell.rectangle.bottomRight,
-                        )
-                    }
-                }
-
-                state.grid.snowFlakes.forEach { snowFlake ->
-                    path.addOval(snowFlake.rectangle)
-                }
-                drawPath(path, color = color)
-                path.reset()
+                /* todo */
             }
+                }
+        },
+    ) { _ ->
+        Canvas(
+            modifier = Modifier
+                .fillMaxSize()
+                .onGloballyPositioned { coordinates ->
+                    viewModel.prepare(coordinates.size.toSize())
+                    viewModel.run()
+                }
+                .pointerInput(Unit) { detectTapGestures(onTap = viewModel::touch) }
+                .hazeSource(state = hazeState),
+        ) {
+            if (state.showDebugInfo) {
+                state.grid.cells.flatten().forEach { cell ->
+                    drawLine(
+                        color = color,
+                        start = cell.rectangle.topLeft,
+                        end = cell.rectangle.topRight,
+                    )
+                    drawLine(
+                        color = color,
+                        start = cell.rectangle.topRight,
+                        end = cell.rectangle.bottomRight,
+                    )
+                }
+            }
+
+            state.grid.snowFlakes.forEach { snowFlake ->
+                path.addOval(snowFlake.rectangle)
+            }
+            drawPath(path, color = color)
+            path.reset()
         }
 
         // TODO: Place somewhere

@@ -24,6 +24,8 @@ kotlin {
             implementation(compose.runtime)
             implementation(libs.compose.navigation)
             implementation(libs.coroutines)
+            implementation(libs.haze)
+            implementation(libs.haze.materials)
             implementation(project.dependencies.platform(libs.koin.bom))
             implementation(libs.koin.compose)
             implementation(libs.koin.compose.viewmodel)
@@ -43,6 +45,8 @@ kotlin {
     sourceSets {
         all {
             languageSettings {
+                optIn("androidx.compose.material3.ExperimentalMaterial3Api")
+                optIn("dev.chrisbanes.haze.materials.ExperimentalHazeMaterialsApi")
                 optIn("kotlin.time.ExperimentalTime")
             }
         }
