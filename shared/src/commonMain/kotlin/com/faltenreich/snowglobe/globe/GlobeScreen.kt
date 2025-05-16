@@ -26,7 +26,10 @@ import dev.chrisbanes.haze.hazeSource
 import dev.chrisbanes.haze.materials.HazeMaterials
 import dev.chrisbanes.haze.rememberHazeState
 import kotlinx.serialization.Serializable
+import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.koinInject
+import snowglobe.shared.generated.resources.Res
+import snowglobe.shared.generated.resources.app_name
 
 @Serializable
 data object Globe
@@ -50,7 +53,7 @@ fun GlobeScreen(
         topBar = {
             if (state.showUi) {
                 TopAppBar(
-                    title = { Text("Snow Globe") },
+                    title = { Text(stringResource(Res.string.app_name)) },
                     modifier = Modifier
                         .hazeEffect(state = hazeState, style = HazeMaterials.ultraThin())
                         .fillMaxWidth(),
