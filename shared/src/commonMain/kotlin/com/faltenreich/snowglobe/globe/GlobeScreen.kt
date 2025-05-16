@@ -14,8 +14,12 @@ import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Path
 import androidx.compose.ui.input.pointer.pointerInput
@@ -43,13 +47,19 @@ fun GlobeScreen(
     modifier: Modifier = Modifier,
 ) {
     val state = viewModel.state.collectAsStateWithLifecycle()
+    val hazeState = rememberHazeState()
     val path = remember { Path() }
     val color = remember { Color.White }
-
-    val hazeState = rememberHazeState()
+    var canvasSize by remember { mutableStateOf(Size.Zero) }
 
     LaunchedEffect(Unit) { viewModel.start() }
     DisposableEffect(Unit) { onDispose { viewModel.stop() } }
+    LaunchedEffect(canvasSize) {
+        if (canvasSize != Size.Zero) {
+            viewModel.prepare(canvasSize)
+            viewModel.run()
+        }
+    }
 
     Scaffold(
         modifier = modifier,
@@ -84,10 +94,7 @@ fun GlobeScreen(
         Canvas(
             modifier = Modifier
                 .fillMaxSize()
-                .onGloballyPositioned { coordinates ->
-                    viewModel.prepare(coordinates.size.toSize())
-                    viewModel.run()
-                }
+                .onGloballyPositioned { canvasSize = it.size.toSize() }
                 .pointerInput(Unit) { detectTapGestures(onTap = viewModel::touch) }
                 .hazeSource(state = hazeState),
         ) {
