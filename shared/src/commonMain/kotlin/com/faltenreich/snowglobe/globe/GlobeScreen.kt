@@ -42,7 +42,7 @@ fun GlobeScreen(
     viewModel: GlobeViewModel,
     modifier: Modifier = Modifier,
 ) {
-    val state = viewModel.state.collectAsStateWithLifecycle().value
+    val state = viewModel.state.collectAsStateWithLifecycle()
     val path = remember { Path() }
     val color = remember { Color.White }
 
@@ -54,7 +54,7 @@ fun GlobeScreen(
     Scaffold(
         modifier = modifier,
         topBar = {
-            if (state.showUi) {
+            if (state.value.showUi) {
                 TopAppBar(
                     title = { Text(stringResource(Res.string.app_name)) },
                     modifier = Modifier
@@ -65,7 +65,7 @@ fun GlobeScreen(
             }
         },
         bottomBar = {
-            if (state.showUi) {
+            if (state.value.showUi) {
                 NavigationBar(
                     containerColor = Color.Transparent,
                     modifier = Modifier
@@ -91,8 +91,8 @@ fun GlobeScreen(
                 .pointerInput(Unit) { detectTapGestures(onTap = viewModel::touch) }
                 .hazeSource(state = hazeState),
         ) {
-            if (state.showDebugInfo) {
-                state.grid.cells.flatten().forEach { cell ->
+            if (state.value.showDebugInfo) {
+                state.value.grid.cells.flatten().forEach { cell ->
                     drawLine(
                         color = color,
                         start = cell.rectangle.topLeft,
@@ -106,7 +106,7 @@ fun GlobeScreen(
                 }
             }
 
-            state.grid.snowFlakes.forEach { snowFlake ->
+            state.value.grid.snowFlakes.forEach { snowFlake ->
                 path.addOval(snowFlake.rectangle)
             }
             drawPath(path, color = color)
@@ -114,9 +114,9 @@ fun GlobeScreen(
         }
 
         // TODO: Place somewhere
-        if (state.showDebugInfo) {
+        if (state.value.showDebugInfo) {
             GlobeDebugInfo(
-                state = state,
+                state = state.value,
                 modifier = Modifier.fillMaxWidth(),
             )
         }
