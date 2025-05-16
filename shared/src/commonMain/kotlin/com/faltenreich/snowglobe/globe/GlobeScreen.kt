@@ -31,7 +31,6 @@ import dev.chrisbanes.haze.materials.HazeMaterials
 import dev.chrisbanes.haze.rememberHazeState
 import kotlinx.serialization.Serializable
 import org.jetbrains.compose.resources.stringResource
-import org.koin.compose.koinInject
 import snowglobe.shared.generated.resources.Res
 import snowglobe.shared.generated.resources.app_name
 
@@ -40,7 +39,7 @@ data object Globe
 
 @Composable
 fun GlobeScreen(
-    viewModel: GlobeViewModel = koinInject(),
+    viewModel: GlobeViewModel,
     modifier: Modifier = Modifier,
 ) {
     val state = viewModel.state.collectAsStateWithLifecycle().value

@@ -9,6 +9,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.faltenreich.snowglobe.globe.Globe
 import com.faltenreich.snowglobe.globe.GlobeScreen
+import org.koin.compose.viewmodel.koinViewModel
 
 @Composable
 fun AppView(modifier: Modifier = Modifier) {
@@ -19,7 +20,7 @@ fun AppView(modifier: Modifier = Modifier) {
                 navController = navController,
                 startDestination = Globe,
             ) {
-                composable<Globe> { GlobeScreen() }
+                composable<Globe> { GlobeScreen(viewModel = koinViewModel()) }
             }
         }
     }
