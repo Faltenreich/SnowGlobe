@@ -4,11 +4,13 @@ import androidx.compose.ui.geometry.Size
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.faltenreich.snowglobe.globe.canvas.BuildGridUseCase
+import com.faltenreich.snowglobe.globe.canvas.CanvasState
 import com.faltenreich.snowglobe.globe.canvas.RunLoopUseCase
 import com.faltenreich.snowglobe.sensor.SensorProvider
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
@@ -21,7 +23,16 @@ class GlobeViewModel(
     private val runLoop: RunLoopUseCase,
 ) : ViewModel() {
 
-    private val _state = MutableStateFlow(GlobeState.Initial)
+    private val isRunning = MutableStateFlow(false)
+    private val acceleration = sensorProvider.acceleration
+    private val canvas = MutableStateFlow(CanvasState.Initial)
+
+    private val _state = combine(
+        isRunning,
+        acceleration,
+        canvas,
+        ::GlobeState,
+    )
     val state = _state.stateIn(
         scope = viewModelScope,
         started = SharingStarted.Lazily,
@@ -30,13 +41,12 @@ class GlobeViewModel(
 
     fun onIntent(intent: GlobeIntent) {
         when (intent) {
-            is GlobeIntent.Toggle -> _state.update { it.copy(isRunning = !it.isRunning) }
+            is GlobeIntent.Toggle -> isRunning.update { !it }
         }
     }
 
     fun prepare(bounds: Size) = viewModelScope.launch {
-        val state = _state.value.copy(grid = buildGrid(bounds))
-        _state.update { state }
+        canvas.update { canvas.value.copy(grid = buildGrid(bounds)) }
     }
 
     fun start() {
@@ -46,8 +56,8 @@ class GlobeViewModel(
     fun run() = viewModelScope.launch {
         while (true) {
             val acceleration = sensorProvider.acceleration.first()
-            val state = runLoop(_state.value.copy(acceleration = acceleration))
-            _state.update { state }
+            val state = runLoop(canvas.value, acceleration = acceleration)
+            canvas.update { state }
             // 60 FPS
             delay(16.milliseconds)
         }

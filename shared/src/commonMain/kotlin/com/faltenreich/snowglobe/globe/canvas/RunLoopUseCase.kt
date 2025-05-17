@@ -3,7 +3,7 @@ package com.faltenreich.snowglobe.globe.canvas
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Rect
 import androidx.compose.ui.unit.Velocity
-import com.faltenreich.snowglobe.globe.GlobeState
+import com.faltenreich.snowglobe.sensor.Acceleration
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import kotlin.math.abs
@@ -12,17 +12,18 @@ import kotlin.time.Clock
 class RunLoopUseCase {
 
     suspend operator fun invoke(
-        state: GlobeState,
+        state: CanvasState,
+        acceleration: Acceleration,
         accelerationScale: Float = ACCELERATION_SCALE,
         velocityMax: Float = VELOCITY_MAX,
         bounceFactor: Float = BOUNCE_FACTOR,
-    ): GlobeState = withContext(Dispatchers.Default) {
+    ): CanvasState = withContext(Dispatchers.Default) {
         val now = Clock.System.now()
         val secondsElapsed = now.minus(state.updatedAt).inWholeNanoseconds / 1000_000_000f
         val cells = state.grid.cells.flatten()
         val acceleration = Velocity(
-            x = -state.acceleration.x * accelerationScale,
-            y = state.acceleration.y * accelerationScale,
+            x = -acceleration.x * accelerationScale,
+            y = acceleration.y * accelerationScale,
         )
 
         val snowFlakes = state.grid.snowFlakes.groupBy { it.cellId }.flatMap { (_, snowFlakesInCell) ->
