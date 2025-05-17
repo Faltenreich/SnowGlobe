@@ -41,7 +41,7 @@ class GlobeViewModel(
 
     fun onIntent(intent: GlobeIntent) {
         when (intent) {
-            is GlobeIntent.Toggle -> isRunning.update { !it }
+            is GlobeIntent.Toggle -> toggle()
         }
     }
 
@@ -51,19 +51,27 @@ class GlobeViewModel(
 
     fun start() {
         sensorProvider.start()
+        isRunning.update { true }
+        run()
     }
 
-    fun run() = viewModelScope.launch {
-        while (true) {
+    fun stop() {
+        sensorProvider.stop()
+        isRunning.update { false }
+    }
+
+    private fun toggle() {
+        if (isRunning.value) stop()
+        else start()
+    }
+
+    private fun run() = viewModelScope.launch {
+        while (isRunning.value) {
             val acceleration = sensorProvider.acceleration.first()
             val state = runLoop(canvas.value, acceleration = acceleration)
             canvas.update { state }
             // 60 FPS
             delay(16.milliseconds)
         }
-    }
-
-    fun stop() {
-        sensorProvider.stop()
     }
 }

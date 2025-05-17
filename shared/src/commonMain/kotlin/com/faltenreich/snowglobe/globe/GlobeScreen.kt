@@ -51,7 +51,7 @@ fun GlobeScreen(
     LaunchedEffect(canvasSize) {
         if (canvasSize != Size.Zero) {
             viewModel.prepare(canvasSize)
-            viewModel.run()
+            viewModel.start()
         }
     }
 
