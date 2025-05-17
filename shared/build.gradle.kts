@@ -24,8 +24,6 @@ kotlin {
             implementation(compose.runtime)
             implementation(libs.compose.navigation)
             implementation(libs.coroutines)
-            implementation(libs.haze)
-            implementation(libs.haze.materials)
             implementation(libs.icons)
             implementation(project.dependencies.platform(libs.koin.bom))
             implementation(libs.koin.compose)

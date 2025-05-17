@@ -6,7 +6,6 @@ android-lifecycle-compose = "2.9.0"
 compose = "1.8.0"
 compose-navigation = "2.8.0-alpha13"
 coroutines = "1.10.2"
-haze = "1.6.0"
 icons = "1.0.0"
 koin = "4.0.4"
 kotlin = "2.1.21"
@@ -18,8 +17,6 @@ activity-compose = { module = "androidx.activity:activity-compose", version.ref 
 androidx-lifecycle-compose = { module = "androidx.lifecycle:lifecycle-runtime-compose", version.ref = "android-lifecycle-compose" }
 compose-navigation = { module = "org.jetbrains.androidx.navigation:navigation-compose", version.ref = "compose-navigation" }
 coroutines = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-core", version.ref = "coroutines" }
-haze = { module = "dev.chrisbanes.haze:haze", version.ref = "haze" }
-haze-materials = { module = "dev.chrisbanes.haze:haze-materials", version.ref = "haze" }
 icons = { module = "com.composables:icons-lucide", version.ref = "icons" }
 koin-bom = { module = "io.insert-koin:koin-bom", version.ref = "koin" }
 koin-android = { module = "io.insert-koin:koin-android" }
