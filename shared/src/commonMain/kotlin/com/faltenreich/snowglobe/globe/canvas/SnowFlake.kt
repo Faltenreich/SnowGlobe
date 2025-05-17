@@ -1,4 +1,4 @@
-package com.faltenreich.snowglobe.globe.snowflake
+package com.faltenreich.snowglobe.globe.canvas
 
 import androidx.compose.ui.geometry.Rect
 import androidx.compose.ui.unit.Velocity

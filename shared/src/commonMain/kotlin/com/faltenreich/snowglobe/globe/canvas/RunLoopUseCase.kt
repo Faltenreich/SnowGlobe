@@ -1,4 +1,4 @@
-package com.faltenreich.snowglobe.globe.usecase
+package com.faltenreich.snowglobe.globe.canvas
 
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Rect

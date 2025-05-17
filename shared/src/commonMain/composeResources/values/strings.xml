@@ -3,5 +3,7 @@
 <resources>
 
     <string name="app_name">Snow Globe</string>
+    <string name="pause">Pause</string>
+    <string name="play">Play</string>
 
 </resources>

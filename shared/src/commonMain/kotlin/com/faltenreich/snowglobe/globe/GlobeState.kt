@@ -9,6 +9,7 @@ import kotlin.time.Clock
 import kotlin.time.Instant
 
 data class GlobeState(
+    val isRunning: Boolean,
     val updatedAt: Instant,
     val acceleration: Acceleration,
     val grid: Grid,
@@ -17,6 +18,7 @@ data class GlobeState(
     companion object {
 
         val Initial = GlobeState(
+            isRunning = false,
             updatedAt = Clock.System.now(),
             acceleration = Acceleration.Zero,
             grid = Grid(

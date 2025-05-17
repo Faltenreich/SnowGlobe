@@ -2,14 +2,14 @@ package com.faltenreich.snowglobe.globe
 
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.asPaddingValues
+import androidx.compose.foundation.layout.calculateEndPadding
+import androidx.compose.foundation.layout.calculateStartPadding
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.systemBars
 import androidx.compose.material3.BottomSheetScaffold
-import androidx.compose.material3.Text
 import androidx.compose.material3.rememberBottomSheetScaffoldState
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
@@ -25,8 +25,10 @@ import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Path
 import androidx.compose.ui.layout.onGloballyPositioned
+import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.toSize
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.faltenreich.snowglobe.globe.overlay.GlobeOverlay
 import kotlinx.coroutines.launch
 import kotlinx.serialization.Serializable
 
@@ -60,12 +62,16 @@ fun GlobeScreen(
 
     BottomSheetScaffold(
         sheetContent = {
-            Column(
-                modifier = Modifier
-                    .padding(WindowInsets.systemBars.asPaddingValues()),
-            ) {
-                Text("Content")
-            }
+            val padding = WindowInsets.systemBars.asPaddingValues()
+            GlobeOverlay(
+                state = state.value,
+                onIntent = viewModel::onIntent,
+                modifier = Modifier.padding(
+                    start = padding.calculateStartPadding(LayoutDirection.Ltr),
+                    bottom = padding.calculateBottomPadding(),
+                    end = padding.calculateEndPadding(LayoutDirection.Ltr),
+                ),
+            )
         },
         modifier = modifier,
         scaffoldState = scaffoldState,

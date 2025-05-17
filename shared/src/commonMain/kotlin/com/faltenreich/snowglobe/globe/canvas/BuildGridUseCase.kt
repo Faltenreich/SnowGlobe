@@ -1,12 +1,9 @@
-package com.faltenreich.snowglobe.globe.usecase
+package com.faltenreich.snowglobe.globe.canvas
 
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Rect
 import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.unit.Velocity
-import com.faltenreich.snowglobe.globe.canvas.Cell
-import com.faltenreich.snowglobe.globe.canvas.Grid
-import com.faltenreich.snowglobe.globe.snowflake.SnowFlake
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import kotlin.random.Random

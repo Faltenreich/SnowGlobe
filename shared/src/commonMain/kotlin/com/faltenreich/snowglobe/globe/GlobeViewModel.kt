@@ -3,8 +3,8 @@ package com.faltenreich.snowglobe.globe
 import androidx.compose.ui.geometry.Size
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.faltenreich.snowglobe.globe.usecase.BuildGridUseCase
-import com.faltenreich.snowglobe.globe.usecase.RunLoopUseCase
+import com.faltenreich.snowglobe.globe.canvas.BuildGridUseCase
+import com.faltenreich.snowglobe.globe.canvas.RunLoopUseCase
 import com.faltenreich.snowglobe.sensor.SensorProvider
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -28,6 +28,12 @@ class GlobeViewModel(
         initialValue = GlobeState.Initial,
     )
 
+    fun onIntent(intent: GlobeIntent) {
+        when (intent) {
+            is GlobeIntent.Toggle -> _state.update { it.copy(isRunning = !it.isRunning) }
+        }
+    }
+
     fun prepare(bounds: Size) = viewModelScope.launch {
         val state = _state.value.copy(grid = buildGrid(bounds))
         _state.update { state }
@@ -35,10 +41,6 @@ class GlobeViewModel(
 
     fun start() {
         sensorProvider.start()
-    }
-
-    fun restart() {
-        prepare(bounds = _state.value.grid.rectangle.size)
     }
 
     fun run() = viewModelScope.launch {
