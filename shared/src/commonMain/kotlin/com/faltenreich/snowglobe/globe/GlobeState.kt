@@ -12,8 +12,6 @@ data class GlobeState(
     val updatedAt: Instant,
     val acceleration: Acceleration,
     val grid: Grid,
-    val showUi: Boolean = false,
-    val showDebugInfo: Boolean = false,
 ) {
 
     companion object {
