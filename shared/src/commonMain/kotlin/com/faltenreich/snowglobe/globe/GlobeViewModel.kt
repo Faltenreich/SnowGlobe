@@ -49,6 +49,11 @@ class GlobeViewModel(
         canvas.update { canvas.value.copy(grid = buildGrid(bounds)) }
     }
 
+    private fun toggle() {
+        if (isRunning.value) stop()
+        else start()
+    }
+
     fun start() {
         sensorProvider.start()
         isRunning.update { true }
@@ -58,11 +63,6 @@ class GlobeViewModel(
     fun stop() {
         sensorProvider.stop()
         isRunning.update { false }
-    }
-
-    private fun toggle() {
-        if (isRunning.value) stop()
-        else start()
     }
 
     private fun run() = viewModelScope.launch {

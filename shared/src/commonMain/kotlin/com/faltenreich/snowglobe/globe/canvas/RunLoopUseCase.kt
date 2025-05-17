@@ -20,12 +20,12 @@ class RunLoopUseCase {
     ): CanvasState = withContext(Dispatchers.Default) {
         val now = Clock.System.now()
         val secondsElapsed = now.minus(state.updatedAt).inWholeNanoseconds / 1000_000_000f
-        val cells = state.grid.cells.flatten()
         val acceleration = Velocity(
             x = -acceleration.x * accelerationScale,
             y = acceleration.y * accelerationScale,
         )
 
+        val cells = state.grid.cells.flatten()
         val snowFlakes = state.grid.snowFlakes.groupBy { it.cellId }.flatMap { (_, snowFlakesInCell) ->
             snowFlakesInCell.map { snowFlake ->
                 var rectangle = snowFlake.rectangle
