@@ -21,7 +21,7 @@ data class CanvasState(
                     size = Size.Zero,
                 ),
                 cells = emptyList(),
-                snowFlakes = emptyList(),
+                placeables = emptyList(),
             ),
         )
     }

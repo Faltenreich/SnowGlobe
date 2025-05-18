@@ -26,51 +26,54 @@ class RunLoopUseCase {
         )
 
         val cells = state.grid.cells.flatten()
-        val snowFlakes = state.grid.snowFlakes.groupBy { it.cellId }.flatMap { (_, snowFlakesInCell) ->
-            snowFlakesInCell.map { snowFlake ->
-                var rectangle = snowFlake.rectangle
-                var velocity = snowFlake.velocity
+        val snowFlakes = state.grid.placeables
+            .filterIsInstance<SnowFlake>()
+            .groupBy { it.cellId }
+            .flatMap { (_, snowFlakesInCell) ->
+                snowFlakesInCell.map { snowFlake ->
+                    var rectangle = snowFlake.rectangle
+                    var velocity = snowFlake.velocity
 
-                velocity = Velocity(
-                    x = (velocity.x + acceleration.x * secondsElapsed).coerceIn(-velocityMax, velocityMax),
-                    y = (velocity.y + acceleration.y * secondsElapsed).coerceIn(-velocityMax, velocityMax),
-                )
+                    velocity = Velocity(
+                        x = (velocity.x + acceleration.x * secondsElapsed).coerceIn(-velocityMax, velocityMax),
+                        y = (velocity.y + acceleration.y * secondsElapsed).coerceIn(-velocityMax, velocityMax),
+                    )
 
-                rectangle = rectangle.translate(
-                    offset = Offset(
-                        x = velocity.x * secondsElapsed,
-                        y = velocity.y * secondsElapsed,
-                    ),
-                )
+                    rectangle = rectangle.translate(
+                        offset = Offset(
+                            x = velocity.x * secondsElapsed,
+                            y = velocity.y * secondsElapsed,
+                        ),
+                    )
 
-                if (rectangle.isLeaving(state.grid.rectangle)) {
-                    // Keep in bounds
-                    rectangle = snowFlake.rectangle
-                    velocity = snowFlake.velocity * -bounceFactor
-                } else {
-                    val overlap = snowFlakesInCell.firstOrNull { it != snowFlake && it.rectangle.overlaps(rectangle) }
-                    overlap?.let {
-                        // Bounce back
+                    if (rectangle.isLeaving(state.grid.rectangle)) {
+                        // Keep in bounds
                         rectangle = snowFlake.rectangle
-                        val dx = rectangle.center.x - overlap.rectangle.center.x
-                        val dy = rectangle.center.y - overlap.rectangle.center.y
-                        velocity =
-                            if (abs(dx) > abs(dy)) velocity.copy(x = velocity.x * -bounceFactor)
-                            else velocity.copy(y = velocity.y * -bounceFactor)
+                        velocity = snowFlake.velocity * -bounceFactor
+                    } else {
+                        val overlap = snowFlakesInCell.firstOrNull { it != snowFlake && it.rectangle.overlaps(rectangle) }
+                        overlap?.let {
+                            // Bounce back
+                            rectangle = snowFlake.rectangle
+                            val dx = rectangle.center.x - overlap.rectangle.center.x
+                            val dy = rectangle.center.y - overlap.rectangle.center.y
+                            velocity =
+                                if (abs(dx) > abs(dy)) velocity.copy(x = velocity.x * -bounceFactor)
+                                else velocity.copy(y = velocity.y * -bounceFactor)
+                        }
                     }
-                }
 
-                val cell = cells.first { rectangle.overlaps(it.rectangle) }
-                snowFlake.copy(
-                    cellId = cell.id,
-                    rectangle = rectangle,
-                    velocity = velocity,
-                )
-            }
+                    val cell = cells.first { rectangle.overlaps(it.rectangle) }
+                    snowFlake.copy(
+                        cellId = cell.id,
+                        rectangle = rectangle,
+                        velocity = velocity,
+                    )
+                }
         }
         state.copy(
             updatedAt = now,
-            grid = state.grid.copy(snowFlakes = snowFlakes),
+            grid = state.grid.copy(placeables = snowFlakes),
         )
     }
 

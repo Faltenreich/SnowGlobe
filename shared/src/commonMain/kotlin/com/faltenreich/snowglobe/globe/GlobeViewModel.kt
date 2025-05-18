@@ -46,7 +46,7 @@ class GlobeViewModel(
     }
 
     fun prepare(bounds: Size) = viewModelScope.launch {
-        canvas.update { canvas.value.copy(grid = buildGrid(bounds)) }
+        canvas.update { it.copy(grid = buildGrid(bounds)) }
     }
 
     private fun toggle() {

@@ -88,8 +88,8 @@ fun GlobeScreen(
                     }
                 },
         ) {
-            state.value.canvas.grid.snowFlakes.forEach { snowFlake ->
-                path.addOval(snowFlake.rectangle)
+            state.value.canvas.grid.placeables.forEach { placeable ->
+                placeable.drawOn(path)
             }
             drawPath(path, color = color)
             path.reset()

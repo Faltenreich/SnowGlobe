@@ -66,7 +66,7 @@ class BuildGridUseCase {
                 size = bounds,
             ),
             cells = grid,
-            snowFlakes = snowFlakes,
+            placeables = snowFlakes,
         )
     }
 

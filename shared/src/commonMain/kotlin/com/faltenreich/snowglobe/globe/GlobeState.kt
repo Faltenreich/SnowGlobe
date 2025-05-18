@@ -27,7 +27,7 @@ data class GlobeState(
                         size = Size.Zero,
                     ),
                     cells = emptyList(),
-                    snowFlakes = emptyList(),
+                    placeables = emptyList(),
                 ),
             ),
         )
