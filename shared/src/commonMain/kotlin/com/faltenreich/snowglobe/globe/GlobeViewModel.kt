@@ -5,6 +5,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.faltenreich.snowglobe.globe.canvas.BuildGridUseCase
 import com.faltenreich.snowglobe.globe.canvas.CanvasState
+import com.faltenreich.snowglobe.globe.canvas.CreateObstacleUseCase
 import com.faltenreich.snowglobe.globe.canvas.RunLoopUseCase
 import com.faltenreich.snowglobe.sensor.SensorProvider
 import kotlinx.coroutines.delay
@@ -20,6 +21,7 @@ import kotlin.time.Duration.Companion.milliseconds
 class GlobeViewModel(
     private val sensorProvider: SensorProvider,
     private val buildGrid: BuildGridUseCase,
+    private val createObstacle: CreateObstacleUseCase,
     private val runLoop: RunLoopUseCase,
 ) : ViewModel() {
 
@@ -77,6 +79,10 @@ class GlobeViewModel(
     }
 
     private fun addObstacle() {
-        TODO()
+        val obstacle = createObstacle(
+            size = Size(200f, 200f),
+            grid = state.value.canvas.grid,
+        )
+        canvas.update { it.copy(grid = it.grid.copy(placeables = it.grid.placeables + obstacle)) }
     }
 }
