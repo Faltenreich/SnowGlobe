@@ -42,6 +42,7 @@ class GlobeViewModel(
     fun onIntent(intent: GlobeIntent) {
         when (intent) {
             is GlobeIntent.Toggle -> toggle()
+            is GlobeIntent.AddObstacle -> addObstacle()
         }
     }
 
@@ -73,5 +74,9 @@ class GlobeViewModel(
             // 60 FPS
             delay(16.milliseconds)
         }
+    }
+
+    private fun addObstacle() {
+        TODO()
     }
 }

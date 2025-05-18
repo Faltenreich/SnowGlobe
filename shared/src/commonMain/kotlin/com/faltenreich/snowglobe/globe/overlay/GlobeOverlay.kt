@@ -5,6 +5,7 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.IconToggleButton
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -12,11 +13,13 @@ import androidx.compose.ui.Modifier
 import com.composables.icons.lucide.Lucide
 import com.composables.icons.lucide.Pause
 import com.composables.icons.lucide.Play
+import com.composables.icons.lucide.Plus
 import com.faltenreich.snowglobe.globe.GlobeIntent
 import com.faltenreich.snowglobe.globe.GlobeState
 import com.faltenreich.snowglobe.theme.LocalDimensions
 import org.jetbrains.compose.resources.stringResource
 import snowglobe.shared.generated.resources.Res
+import snowglobe.shared.generated.resources.obstacle_add
 import snowglobe.shared.generated.resources.pause
 import snowglobe.shared.generated.resources.play
 
@@ -40,6 +43,12 @@ fun GlobeOverlay(
             Icon(
                 imageVector = if (isRunning) Lucide.Pause else Lucide.Play,
                 contentDescription = stringResource(if (isRunning) Res.string.pause else Res.string.play),
+            )
+        }
+        IconButton(onClick = { onIntent(GlobeIntent.AddObstacle) }) {
+            Icon(
+                imageVector = Lucide.Plus,
+                contentDescription = stringResource(Res.string.obstacle_add),
             )
         }
     }
