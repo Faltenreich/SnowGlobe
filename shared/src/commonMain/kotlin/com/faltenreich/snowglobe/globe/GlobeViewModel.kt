@@ -52,11 +52,6 @@ class GlobeViewModel(
         canvas.update { it.copy(grid = buildGrid(bounds)) }
     }
 
-    private fun toggle() {
-        if (isRunning.value) stop()
-        else start()
-    }
-
     fun start() {
         sensorProvider.start()
         isRunning.update { true }
@@ -68,11 +63,18 @@ class GlobeViewModel(
         isRunning.update { false }
     }
 
+    private fun toggle() {
+        if (isRunning.value) stop()
+        else start()
+    }
+
     private fun run() = viewModelScope.launch {
         while (isRunning.value) {
-            val acceleration = sensorProvider.acceleration.first()
-            val state = runLoop(canvas.value, acceleration = acceleration)
-            canvas.update { state }
+            if (canvas.value.grid.rectangle.size != Size.Zero) {
+                val acceleration = sensorProvider.acceleration.first()
+                val state = runLoop(canvas.value, acceleration = acceleration)
+                canvas.update { state }
+            }
             // 60 FPS
             delay(16.milliseconds)
         }
