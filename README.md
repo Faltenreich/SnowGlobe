@@ -4,7 +4,7 @@ This project serves as playground for a physics-based game with Compose Multipla
 
 #### License
 
-    Copyright (C) 2013-2025 Philipp Fahlteich
+    Copyright (C) 2025 Philipp Fahlteich
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
