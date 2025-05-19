@@ -1,7 +1,8 @@
 package com.faltenreich.snowglobe.globe
 
 import androidx.compose.foundation.Canvas
-import androidx.compose.foundation.clickable
+import androidx.compose.foundation.gestures.detectDragGestures
+import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.asPaddingValues
 import androidx.compose.foundation.layout.calculateEndPadding
@@ -24,6 +25,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Path
+import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.toSize
@@ -79,11 +81,19 @@ fun GlobeScreen(
             modifier = Modifier
                 .fillMaxSize()
                 .onGloballyPositioned { canvasSize = it.size.toSize() }
-                .clickable {
-                    if (!scaffoldState.bottomSheetState.isVisible) {
-                        scope.launch {
-                            scaffoldState.bottomSheetState.show()
-                        }
+                .pointerInput(Unit) {
+                    detectTapGestures(
+                        onTap = {
+                            if (!scaffoldState.bottomSheetState.isVisible) {
+                                scope.launch { scaffoldState.bottomSheetState.show() }
+                            }
+                        },
+                    )
+                }
+                .pointerInput(Unit) {
+                    detectDragGestures { change, dragAmount ->
+                        change.consume()
+                        viewModel.drag(change.position, dragAmount)
                     }
                 },
         ) {

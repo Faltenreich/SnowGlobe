@@ -1,11 +1,13 @@
 package com.faltenreich.snowglobe.globe
 
+import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Size
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.faltenreich.snowglobe.globe.canvas.BuildGridUseCase
 import com.faltenreich.snowglobe.globe.canvas.CanvasState
 import com.faltenreich.snowglobe.globe.canvas.CreateObstacleUseCase
+import com.faltenreich.snowglobe.globe.canvas.MoveObstacleUseCase
 import com.faltenreich.snowglobe.globe.canvas.RunLoopUseCase
 import com.faltenreich.snowglobe.sensor.SensorProvider
 import kotlinx.coroutines.delay
@@ -22,6 +24,7 @@ class GlobeViewModel(
     private val sensorProvider: SensorProvider,
     private val buildGrid: BuildGridUseCase,
     private val createObstacle: CreateObstacleUseCase,
+    private val moveObstacle: MoveObstacleUseCase,
     private val runLoop: RunLoopUseCase,
 ) : ViewModel() {
 
@@ -72,8 +75,7 @@ class GlobeViewModel(
         while (isRunning.value) {
             if (canvas.value.grid.rectangle.size != Size.Zero) {
                 val acceleration = sensorProvider.acceleration.first()
-                val state = runLoop(canvas.value, acceleration = acceleration)
-                canvas.update { state }
+                canvas.update { runLoop(canvas.value, acceleration = acceleration) }
             }
             // 60 FPS
             delay(16.milliseconds)
@@ -85,6 +87,20 @@ class GlobeViewModel(
             size = Size(200f, 200f),
             grid = state.value.canvas.grid,
         )
-        canvas.update { it.copy(grid = it.grid.copy(placeables = it.grid.placeables + obstacle)) }
+        canvas.update {
+            val update = it.grid.copy(placeables = it.grid.placeables + obstacle)
+            it.copy(grid = update)
+        }
+    }
+
+    fun drag(position: Offset, dragAmount: Offset) {
+        canvas.update {
+            val update = moveObstacle(
+                grid = it.grid,
+                position = position,
+                dragAmount = dragAmount,
+            )
+            it.copy(grid = update)
+        }
     }
 }
