@@ -17,10 +17,6 @@ class CreateObstacleUseCase {
             ),
             size = size,
         )
-        val cell = grid.cells.flatten().first { rectangle.overlaps(it.rectangle) }
-        return Obstacle(
-            rectangle = rectangle,
-            cellId = cell.id,
-        )
+        return Obstacle(rectangle)
     }
 }

@@ -6,7 +6,6 @@ import androidx.compose.ui.graphics.Path
 interface Placeable {
 
     val rectangle: Rect
-    val cellId: Int
 
     fun drawOn(path: Path)
 }
