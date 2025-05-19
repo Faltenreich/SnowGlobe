@@ -6,6 +6,7 @@
         android:name="com.faltenreich.snowglobe.MainApplication"
         android:allowBackup="true"
         android:supportsRtl="true"
+        android:label="Snow Globe"
         android:theme="@android:style/Theme.Material.NoActionBar">
 
         <activity
