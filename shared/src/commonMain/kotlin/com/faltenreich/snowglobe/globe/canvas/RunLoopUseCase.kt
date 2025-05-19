@@ -54,7 +54,8 @@ class RunLoopUseCase {
                     rectangle = snowFlake.rectangle
                     velocity = snowFlake.velocity * -bounceFactor
                 } else {
-                    val overlap = snowFlakesInCell.firstOrNull { it != snowFlake && it.rectangle.overlaps(rectangle) }
+                    val overlap = obstacles.firstOrNull { it.rectangle.overlaps(rectangle) }
+                        ?: snowFlakesInCell.firstOrNull { it != snowFlake && it.rectangle.overlaps(rectangle) }
                     overlap?.let {
                         // Bounce back
                         rectangle = snowFlake.rectangle
