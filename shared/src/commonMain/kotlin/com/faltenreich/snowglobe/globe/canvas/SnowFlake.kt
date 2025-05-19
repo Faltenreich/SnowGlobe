@@ -6,8 +6,8 @@ import androidx.compose.ui.unit.Velocity
 
 data class SnowFlake(
     override val rectangle: Rect,
+    override val cellId: Int,
     val velocity: Velocity,
-    val cellId: Int,
 ) : Placeable {
 
     override fun drawOn(path: Path) {
